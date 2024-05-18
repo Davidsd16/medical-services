@@ -4,30 +4,33 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Definición de una nueva migración utilizando una clase anónima
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta las migraciones.
      *
      * @return void
      */
     public function up()
     {
+        // Crea la tabla 'services' en la base de datos
         Schema::create('services', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->integer('duration');
-            $table->timestamps();
+            $table->id(); // Columna 'id' (clave primaria) de tipo increment (unsignedBigInteger)
+            $table->string('name'); // Columna 'name' de tipo string (varchar)
+            $table->integer('duration'); // Columna 'duration' de tipo integer
+            $table->timestamps(); // Columnas 'created_at' y 'updated_at' de tipo timestamp
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte las migraciones.
      *
      * @return void
      */
     public function down()
     {
+        // Elimina la tabla 'services' si existe
         Schema::dropIfExists('services');
     }
 };
