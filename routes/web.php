@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MyScheduleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,14 +13,17 @@ Route::get('/', function () {
 // Ruta para la página "about"
 Route::view('/about', 'about');
 
-Route::get('/my-schedule', function () {
-    return view('my-schedule.index');
-})->middleware(['auth', 'verified'])->name('my-schedule');
+Route::middleware('auth')->group(function () {
+    Route::get('/my-schedule', function () {
+        return view('my-schedule.index');
+    })->name('my-schedule');
 
-// Ruta para el dashboard, requiere autenticación y verificación de email
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard', [MyScheduleController::class, 'index'])
+        ->name('dashboard');
+});
+
+
+
 
 // Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
