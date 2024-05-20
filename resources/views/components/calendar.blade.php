@@ -29,14 +29,18 @@
         <div id="myModal" class="modal hidden fixed inset-0 flex items-center justify-center z-50">
             <div class="modal-overlay absolute inset-0 bg-black opacity-50"></div>
             <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+                
                 <div class="modal-content py-4 text-left px-6">
+                    
                     <div class="flex justify-between items-center pb-3">
                         <p class="text-2xl font-bold">Selected Date</p>
                         <button id="closeModal"
                                 class="modal-close px-3 py-1 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring">✕</button>
                     </div>
+
                     <div id="modalDate" class="text-xl font-semibold"></div>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -80,7 +84,8 @@
 
         // Create boxes for each day of the month
         for (let day = 1; day <= daysInMonth; day++) {
-            const dayElement = document.createElement('div');
+            const dayElement = document.createElement('a');
+            dayElement.href = `/my-schedule?date=${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             dayElement.className = 'text-center py-2 border cursor-pointer';
             dayElement.innerText = day;
 
@@ -89,13 +94,6 @@
             if (year === currentDate.getFullYear() && month === currentDate.getMonth() && day === currentDate.getDate()) {
                 dayElement.classList.add('bg-blue-500', 'text-white'); // Add classes for the indicator
             }
-
-            dayElement.addEventListener('click', () => {
-                const selectedDate = new Date(year, month, day);
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const formattedDate = selectedDate.toLocaleDateString(undefined, options);
-                showModal(formattedDate);
-            });
 
             calendarElement.appendChild(dayElement);
         }
@@ -148,4 +146,3 @@
 
 </body>
 </html>
-
