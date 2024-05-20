@@ -12,6 +12,10 @@ Route::get('/', function () {
 // Ruta para la página "about"
 Route::view('/about', 'about');
 
+Route::get('/my-schedule', function () {
+    return view('my-schedule.index');
+})->middleware(['auth', 'verified'])->name('my-schedule');
+
 // Ruta para el dashboard, requiere autenticación y verificación de email
 Route::get('/dashboard', function () {
     return view('dashboard');
