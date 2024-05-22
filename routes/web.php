@@ -1,25 +1,37 @@
 <?php
 
+// Importa el controlador ProfileController desde el espacio de nombres App\Http\Controllers
 use App\Http\Controllers\ProfileController;
+// Importa la fachada Route de Laravel para definir las rutas de la aplicación
 use Illuminate\Support\Facades\Route;
 
-
-
+// Define una ruta GET para la URL raíz ('/')
+// Esta ruta devuelve la vista 'welcome'
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Ruta para la página "about"
+// Define una ruta de vista para la URL '/about'
+// Esta ruta simplemente devuelve la vista 'about'
 Route::view('/about', 'about');
 
+// Define una ruta GET para la URL '/dashboard'
+// Esta ruta devuelve la vista 'dashboard'
+// Aplica los middleware 'auth' y 'verified' para asegurar que el usuario esté autenticado y verificado
+// Además, nombra esta ruta como 'dashboard'
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Define una ruta GET para la URL '/my-schedule'
+// Esta ruta devuelve la vista 'my-schedule.index'
+// Aplica los middleware 'auth' y 'verified' para asegurar que el usuario esté autenticado y verificado
+// Además, nombra esta ruta como 'my-schedule'
 Route::get('/my-schedule', function () {
     return view('my-schedule.index');
 })->middleware(['auth', 'verified'])->name('my-schedule');
 
-// Ruta para el dashboard, requiere autenticación y verificación de email
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 // Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
