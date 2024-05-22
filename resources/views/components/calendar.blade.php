@@ -36,6 +36,11 @@
                                 class="modal-close px-3 py-1 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring">✕</button>
                     </div>
                     <div id="modalDate" class="text-xl font-semibold"></div>
+                    <form id="dateForm" method="POST" action="/save-date">
+                        @csrf
+                        <input type="hidden" id="hiddenModalDate" name="date" value="">
+                        <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Save Date</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -130,7 +135,9 @@
     function showModal(selectedDate) {
         const modal = document.getElementById('myModal');
         const modalDateElement = document.getElementById('modalDate');
+        const hiddenModalDate = document.getElementById('hiddenModalDate');
         modalDateElement.innerText = selectedDate;
+        hiddenModalDate.value = selectedDate; // Set the value of the hidden input to the selected date
         modal.classList.remove('hidden');
     }
 
