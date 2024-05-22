@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 // Importa la fachada Route de Laravel para definir las rutas de la aplicación
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\DateController;
+
 // Define una ruta GET para la URL raíz ('/')
 // Esta ruta devuelve la vista 'welcome'
 Route::get('/', function () {
@@ -31,7 +33,7 @@ Route::get('/my-schedule', function () {
     return view('my-schedule.index');
 })->middleware(['auth', 'verified'])->name('my-schedule');
 
-
+Route::post('/save-date', [DateController::class, 'store'])->name('my-schedule.store');
 
 // Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {

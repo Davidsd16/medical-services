@@ -20,11 +20,11 @@
                             <x-calendar></x-calendar>
                         </div>
                         <div class="w-2/3">
-                            Mis citas aqui.
+                            Mis citas aquí -> {{ $date ?? 'No date selected' }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>    
+</x-app-layout>
