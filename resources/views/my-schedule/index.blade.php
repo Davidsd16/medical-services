@@ -15,15 +15,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("Administrar citas médicas") }}
                     <div class="flex">
                         <div class="w-1/3">
                             <x-calendar></x-calendar>
                         </div>
-                        <div class="w-2/3 bg-gray-300">
-                            Mis citas aquí: {{$date}}
+                        <div class="w-2/3">
+                            Mis citas aquí -> {{ $date ?? 'No date selected' }}
                         </div>
-                        <x-button class="bg-red-600 hover:bg-orange-500">Acceder</x-button>
                     </div>
                 </div>
             </div>
