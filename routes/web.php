@@ -36,8 +36,7 @@ Route::get('/my-schedule', function () {
     return view('my-schedule.index');
 })->middleware(['auth', 'verified'])->name('my-schedule');
 
-Route::post('/save-date', [DateController::class, 'store'])->name('my-schedule.store');
-Route::get('/my-schedule', [DateController::class, 'index'])->name('my-schedule.index');
+
 Route::get('/my-schedule', [MyScheduleController::class, 'index'])->name('my-schedule.index');
 
 
