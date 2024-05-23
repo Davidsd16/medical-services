@@ -6,6 +6,9 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DateController;
+use App\Http\Controllers\MyScheduleController;
+
+
 
 // Define una ruta GET para la URL raíz ('/')
 // Esta ruta devuelve la vista 'welcome'
@@ -34,6 +37,9 @@ Route::get('/my-schedule', function () {
 })->middleware(['auth', 'verified'])->name('my-schedule');
 
 Route::post('/save-date', [DateController::class, 'store'])->name('my-schedule.store');
+Route::get('/my-schedule', [DateController::class, 'index'])->name('my-schedule.index');
+Route::get('/my-schedule', [MyScheduleController::class, 'index'])->name('my-schedule.index');
+
 
 // Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
