@@ -31,12 +31,18 @@
                             <h3 class="font-bold text-lg">Mis citas para: {{ $date->isoFormat('dddd Do MMMM YYYY') }}</h3>
 
                             {{-- Bucle para mostrar las citas del día --}}
-                            @foreach ($dayScheduler as $schedule)
-                            <div class="mt-2 bg-indigo-100 p-3 rounded">
-                                <div>{{ $schedule->service->name }} con {{ $schedule->staffUser->name }}</div>
-                                <div>Desde <span class="font-bold">{{ $schedule->from->format('H:i') }}</span> hasta <span class="font-bold">{{ $schedule->to->format('H:i') }}</span></div>
-                            </div>
-                            @endforeach
+                            @if ($dayScheduler->isEmpty())
+                                <div class="mt-2 bg-red-100 p-3 rounded">
+                                    <div>No hay citas para la fecha seleccionada.</div>
+                                </div>
+                            @else
+                                @foreach ($dayScheduler as $schedule)
+                                    <div class="mt-2 bg-indigo-100 p-3 rounded">
+                                        <div>{{ $schedule->service->name }} con {{ $schedule->staffUser->name }}</div>
+                                        <div>Desde <span class="font-bold">{{ $schedule->from->format('H:i') }}</span> hasta <span class="font-bold">{{ $schedule->to->format('H:i') }}</span></div>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>
