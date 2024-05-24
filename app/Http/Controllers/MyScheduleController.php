@@ -3,16 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class MyScheduleController extends Controller
 {
+    /**
+     * Muestra la agenda para una fecha específica.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
     public function index(Request $request)
     {
-        // Obtener la fecha de la solicitud
-        $date = $request->query('date', 'No date selected');
+        // Analiza el parámetro de consulta 'date' a una instancia de Carbon
+        $date = Carbon::parse($request->query('date'));
 
-        // Retornar la vista con la variable date
-        return view('my-schedule.index', compact('date'));
+        // Devuelve la vista 'my-schedule.index' con los datos de la fecha
+        return view('my-schedule.index')
+            ->with([
+                'date' => $date,
+            ]);
     }
 }
