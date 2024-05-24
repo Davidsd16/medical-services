@@ -35,7 +35,9 @@
                                 <x-label for="service_id" :value="__('Elige el servicio')" /> <!-- Etiqueta para el selector de servicio -->
                                 <x-select id="service_id" class="block mt-1 w-full" name="service_id">
                                     <option value="">--Selecciona el servicio--</option> <!-- Opción predeterminada -->
-                                    <option> </option> <!-- Opción adicional -->
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}">{{ $service->name }}</option> <!-- Opción de servicio -->
+                                    @endforeach
                                 </x-select> <!-- Selector de servicio -->
                             </div>
 

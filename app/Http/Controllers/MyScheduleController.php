@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Scheduler;
+use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -33,8 +34,19 @@ class MyScheduleController extends Controller
             ]);
     }
 
+    /**
+     * Muestra el formulario para crear una nueva cita.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
-        return view('my-schedule.create');
+        // Obtiene todos los servicios disponibles
+        $services = Service::all();
+        
+        // Devuelve la vista 'my-schedule.create' con los servicios disponibles
+        return view('my-schedule.create')->with([
+            'services' => $services,
+        ]);
     }
 }
