@@ -1,10 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-// Importa la fachada Route de Laravel para definir las rutas de la aplicación
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\MyScheduleController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,21 +10,20 @@ Route::get('/', function () {
 
 Route::view('/about', 'about');
 
+// Agrupa las rutas que requieren autenticación y verificación
 Route::middleware(['auth', 'verified'])->group(function () {
-
+    // Define la ruta para el dashboard
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/my-schedule', function () {
-        return view('my-schedule.index');
-    })->name('my-schedule');
-
+    // Define las rutas para el calendario
     Route::get('/my-schedule', [MyScheduleController::class, 'index'])->name('my-schedule.index');
+    
+    Route::get('/my-schedule/create', [MyScheduleController::class, 'create'])->name('my-schedule.create');
 });
 
-
-// Rutas protegidas por autenticación
+// Agrupa las rutas de perfil que requieren autenticación
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

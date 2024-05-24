@@ -45,9 +45,10 @@
                             @endif
                         </div>
                     </div>
+                    <x-link href="{{ route('my-schedule.create') }}">Reservar nueva cita</x-link>
+
                 </div>
             </div>
         </div>
     </div>
-    
 </x-app-layout>

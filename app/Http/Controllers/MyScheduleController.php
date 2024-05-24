@@ -32,4 +32,9 @@ class MyScheduleController extends Controller
                 'dayScheduler' => $dayScheduler,
             ]);
     }
+
+    public function create()
+    {
+        return view('my-schedule.create');
+    }
 }

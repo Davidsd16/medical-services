@@ -13,7 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        {{ $headers }} <!-- Este es el slot para los estilos adicionales -->
+        {{ $headers ?? '' }} <!-- Este es el slot para los estilos adicionales -->
     </head>
     <body class="font-sans antialiased">
         
