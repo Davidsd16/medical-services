@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\MyScheduleRequest;
+use App\Business\StaffAvailabilityChecker;
 
 class MyScheduleController extends Controller
 {
@@ -64,7 +65,7 @@ class MyScheduleController extends Controller
      */
     public function store(MyScheduleRequest $request)
     {
-        
+
         // Obtiene el servicio seleccionado
         $service = Service::find(request('service_id'));
 
@@ -72,7 +73,17 @@ class MyScheduleController extends Controller
         $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
 
         // Calcula la hora de finalización añadiendo la duración del servicio
-        $to = $from->toImmutable()->addMinutes($service->duration);
+        $to = Carbon::parse($from)->addMinutes($service->duration);
+
+        // Busca el usuario del personal basado en el 'staff_user_id' proporcionado en la solicitud
+        $staffUser = User::find($request->input('staff_user_id'));
+
+        // Verifica la disponibilidad del personal en el horario especificado
+        if (!(new StaffAvailabilityChecker($staffUser, $from, $to))->check()) {
+            // Si el horario no está disponible, redirige de vuelta con un mensaje de error y los datos del formulario
+            return back()->withErrors('Este horario no está disponible')->withInput();
+        }
+
 
         // Crea una nueva cita en la base de datos
         Scheduler::create([
