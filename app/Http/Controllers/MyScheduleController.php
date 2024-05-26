@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Scheduler;
 use App\Models\Service;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -43,10 +44,15 @@ class MyScheduleController extends Controller
     {
         // Obtiene todos los servicios disponibles
         $services = Service::all();
+    
+        // Obtiene todos los usuarios con el rol 'staff'
+        $staffUsers = User::role('staff')->get();
         
-        // Devuelve la vista 'my-schedule.create' con los servicios disponibles
+        // Devuelve la vista 'my-schedule.create' con los servicios disponibles y los usuarios del staff
         return view('my-schedule.create')->with([
             'services' => $services,
+            'staffUsers' => $staffUsers, 
         ]);
     }
+    
 }
