@@ -4,10 +4,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MyScheduleController;
 use Illuminate\Support\Facades\Route;
 
+// Ruta para la página de inicio
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Ruta para la página "about"
 Route::view('/about', 'about');
 
 // Agrupa las rutas que requieren autenticación y verificación
@@ -19,11 +21,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Define las rutas para el calendario
     Route::get('/my-schedule', [MyScheduleController::class, 'index'])->name('my-schedule.index');
-    
     Route::get('/my-schedule/create', [MyScheduleController::class, 'create'])->name('my-schedule.create');
-
-    Route::get('/my-schedule/store', [MyScheduleController::class, 'store'])->name('my-schedule.store'); // Cambiado a 'store'
-
+    Route::get('/my-schedule/store', [MyScheduleController::class, 'store'])->name('my-schedule.store'); // Cambiado a POST para almacenar citas
 });
 
 // Agrupa las rutas de perfil que requieren autenticación

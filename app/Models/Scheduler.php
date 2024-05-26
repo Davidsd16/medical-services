@@ -10,8 +10,10 @@ class Scheduler extends Model
 {
     use HasFactory;
 
+    // Define la propiedad $from como 'fillable'
     protected $from = 'fillable';
 
+    // Define los campos que se pueden asignar masivamente
     protected $fillable = [
         'from',
         'to',
@@ -21,7 +23,7 @@ class Scheduler extends Model
         'service_id',
     ];
 
-
+    // Especifica los campos que deben ser tratados como instancias de Carbon (fechas)
     protected $dates = [
         'from',
         'to',
@@ -34,6 +36,7 @@ class Scheduler extends Model
      */
     public function service()
     {
+        // Una cita pertenece a un servicio
         return $this->belongsTo(Service::class);
     }
 
@@ -44,6 +47,7 @@ class Scheduler extends Model
      */
     public function staffUser()
     {
+        // Una cita pertenece a un usuario del personal (staff)
         return $this->belongsTo(User::class);
     }
 }

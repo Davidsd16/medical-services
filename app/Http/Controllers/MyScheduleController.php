@@ -28,11 +28,10 @@ class MyScheduleController extends Controller
             ->get();
 
         // Devuelve la vista 'my-schedule.index' con los datos de la fecha y las citas del día
-        return view('my-schedule.index')
-            ->with([
-                'date' => $date,
-                'dayScheduler' => $dayScheduler,
-            ]);
+        return view('my-schedule.index')->with([
+            'date' => $date,
+            'dayScheduler' => $dayScheduler,
+        ]);
     }
 
     /**
@@ -64,21 +63,23 @@ class MyScheduleController extends Controller
     public function store(Request $request)
     {
         // Valida los datos del formulario
-        /*
         $request->validate([
             'from.date' => 'required|date',
             'from.time' => 'required',
             'service_id' => 'required|exists:services,id',
             'staff_user_id' => 'required|exists:users,id',
         ]);
-*/
+
+        // Obtiene el servicio seleccionado
         $service = Service::find(request('service_id'));
 
-        
+        // Combina la fecha y la hora de inicio en una instancia de Carbon
         $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
+
+        // Calcula la hora de finalización añadiendo la duración del servicio
         $to = $from->addMinutes($service->duration);
 
-
+        // Crea una nueva cita en la base de datos
         Scheduler::create([
             'from' => $from,
             'to' => $to,
@@ -86,12 +87,11 @@ class MyScheduleController extends Controller
             'staff_user_id' => request('staff_user_id'),
             'client_user_id' => auth()->id(),
             'service_id' => $service->id,
-
         ]);
 
-        return redirect()->route('my-schedule.index', 
-            [
-                'date' => $from->format('Y-m-d')
-            ])->with('success', 'Cita creada con éxito.');
+        // Redirige a la vista del calendario con un mensaje de éxito
+        return redirect()->route('my-schedule.index', [
+            'date' => $from->format('Y-m-d')
+        ])->with('success', 'Cita creada con éxito.');
     }
 }

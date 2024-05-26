@@ -52,8 +52,7 @@
                         </div>
                     </div>
                     <!-- Enlace para reservar una nueva cita -->
-                    <x-link href="{{ route('my-schedule.create',['date' => $date->format('Y-m-d')]) }}">Reservar nueva cita</x-link>
-
+                    <x-link href="{{ route('my-schedule.create', ['date' => $date->format('Y-m-d')]) }}">Reservar nueva cita</x-link>
                 </div>
             </div>
         </div>
