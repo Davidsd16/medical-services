@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Requests\MyScheduleRequest;
 
 class MyScheduleController extends Controller
 {
@@ -25,6 +26,7 @@ class MyScheduleController extends Controller
         // Obtiene las citas del día para el usuario autenticado
         $dayScheduler = Scheduler::where('client_user_id', auth()->id())
             ->whereDate('from', $date->format('Y-m-d'))
+            ->orderBy('from', 'ASC')
             ->get();
 
         // Devuelve la vista 'my-schedule.index' con los datos de la fecha y las citas del día
@@ -60,16 +62,9 @@ class MyScheduleController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(MyScheduleRequest $request)
     {
-        // Valida los datos del formulario
-        $request->validate([
-            'from.date' => 'required|date',
-            'from.time' => 'required',
-            'service_id' => 'required|exists:services,id',
-            'staff_user_id' => 'required|exists:users,id',
-        ]);
-
+        
         // Obtiene el servicio seleccionado
         $service = Service::find(request('service_id'));
 
@@ -77,7 +72,7 @@ class MyScheduleController extends Controller
         $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
 
         // Calcula la hora de finalización añadiendo la duración del servicio
-        $to = $from->addMinutes($service->duration);
+        $to = $from->toImmutable()->addMinutes($service->duration);
 
         // Crea una nueva cita en la base de datos
         Scheduler::create([
