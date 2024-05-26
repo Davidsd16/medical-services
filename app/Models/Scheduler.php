@@ -10,7 +10,17 @@ class Scheduler extends Model
 {
     use HasFactory;
 
-    protected $table = 'scheduler';
+    protected $from = 'fillable';
+
+    protected $fillable = [
+        'from',
+        'to',
+        'status',
+        'staff_user_id',
+        'client_user_id',
+        'service_id',
+    ];
+
 
     protected $dates = [
         'from',

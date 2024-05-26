@@ -54,5 +54,44 @@ class MyScheduleController extends Controller
             'staffUsers' => $staffUsers, 
         ]);
     }
-    
+
+    /**
+     * Almacena una nueva cita.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
+    {
+        // Valida los datos del formulario
+        /*
+        $request->validate([
+            'from.date' => 'required|date',
+            'from.time' => 'required',
+            'service_id' => 'required|exists:services,id',
+            'staff_user_id' => 'required|exists:users,id',
+        ]);
+*/
+        $service = Service::find(request('service_id'));
+
+        
+        $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
+        $to = $from->addMinutes($service->duration);
+
+
+        Scheduler::create([
+            'from' => $from,
+            'to' => $to,
+            'status' => 'pending',
+            'staff_user_id' => request('staff_user_id'),
+            'client_user_id' => auth()->id(),
+            'service_id' => $service->id,
+
+        ]);
+
+        return redirect()->route('my-schedule.index', 
+            [
+                'date' => $from->format('Y-m-d')
+            ])->with('success', 'Cita creada con éxito.');
+    }
 }

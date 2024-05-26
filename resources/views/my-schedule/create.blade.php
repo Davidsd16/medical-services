@@ -13,7 +13,8 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <!-- Formulario para reservar una cita -->
-                    <form>
+                    <form action="{{ route('my-schedule.store') }}">
+                        @csrf
                         <!-- Grid para organizar los elementos del formulario en dos columnas -->
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Campo de entrada de fecha para la cita -->

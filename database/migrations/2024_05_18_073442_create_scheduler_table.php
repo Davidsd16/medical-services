@@ -15,7 +15,7 @@ return new class extends Migration
     public function up()
     {
         // Crea la tabla 'scheduler' en la base de datos
-        Schema::create('scheduler', function (Blueprint $table) {
+        Schema::create('schedulers', function (Blueprint $table) {
             $table->id(); // Columna 'id' (clave primaria) de tipo increment (unsignedBigInteger)
             $table->dateTime('from'); // Columna 'from' de tipo dateTime
             $table->dateTime('to'); // Columna 'to' de tipo dateTime

@@ -21,6 +21,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-schedule', [MyScheduleController::class, 'index'])->name('my-schedule.index');
     
     Route::get('/my-schedule/create', [MyScheduleController::class, 'create'])->name('my-schedule.create');
+
+    Route::get('/my-schedule/store', [MyScheduleController::class, 'store'])->name('my-schedule.store'); // Cambiado a 'store'
+
 });
 
 // Agrupa las rutas de perfil que requieren autenticación
