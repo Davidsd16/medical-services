@@ -40,6 +40,7 @@
                                     <div>No hay citas para la fecha seleccionada.</div>
                                 </div>
                             @else
+                                <x-auth-validation-errors></x-auth-validation-errors>
                                 <!-- Mostrar las citas -->
                                 @foreach ($dayScheduler as $schedule)
                                 <div class="flex items-center mt-2 bg-indigo-100 p-3 rounded">
@@ -49,7 +50,8 @@
                                         <div>Desde <span class="font-bold">{{ $schedule->from->format('H:i') }}</span> hasta <span class="font-bold">{{ $schedule->to->format('H:i') }}</span></div>
                                     </div>
                                     <div>
-                                        <form method="POST" action="{{ route('my-schedule.destroy', ['scheduler' => $schedule->id])}}">
+                                        <form method="POST" onsubmit="return confirm('Realmente deseas cancelar esta cita?')" 
+                                            action="{{ route('my-schedule.destroy', ['scheduler' => $schedule->id])}}">
                                             @method('DELETE')
                                             @csrf
                                             <x-button>Cancelar</x-button>

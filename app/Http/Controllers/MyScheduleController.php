@@ -9,6 +9,7 @@ use App\Models\Scheduler;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MyScheduleRequest;
+use App\Business\DeletePermissionChecker;
 use Illuminate\Console\Scheduling\Schedule;
 
 class MyScheduleController extends Controller
@@ -78,7 +79,7 @@ class MyScheduleController extends Controller
         $staffUser = User::find($request->input('staff_user_id'));
 
         // Llama a la función que verifica las reglas de reserva para comprobar la disponibilidad del personal, del cliente y la prestación del servicio
-        $this->checkReservationRules($staffUser, auth()->user(), $from, $to, $service);
+        $request->checkReservationRules($staffUser, auth()->user(), $from, $to, $service);
         
         // Crea una nueva cita en la base de datos
         Scheduler::create([
@@ -96,7 +97,7 @@ class MyScheduleController extends Controller
                 ])->with('success', 'Cita creada con éxito.');
     }
 
-        /**
+    /**
      * Elimina una cita existente.
      *
      * @param \App\Models\Scheduler $scheduler
@@ -104,11 +105,19 @@ class MyScheduleController extends Controller
      */
     public function destroy(Scheduler $scheduler)
     {
+        // Verifica los permisos para eliminar la cita
+        $checker = new DeletePermissionChecker($scheduler, auth()->user());
+
+        // Si no tiene permisos, redirige de vuelta con un mensaje de error
+        if (!$checker->check()) {
+            return back()->withErrors('No tienes permiso para eliminar esta cita o la cita ya ha pasado.');
+        }
+
         // Elimina la cita
         $scheduler->delete();
 
         // Redirige a la vista del calendario con un mensaje de éxito
         return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
     }
-    
+
 }

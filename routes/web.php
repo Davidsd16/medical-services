@@ -29,7 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('my-schedule.create'); // Nombre de la ruta: 'my-schedule.create'
 
     // Ruta para almacenar una nueva cita en la base de datos
-    Route::post('/my-schedule/store', [MyScheduleController::class, 'store'])
+    Route::get('/my-schedule/store', [MyScheduleController::class, 'store'])
         ->name('my-schedule.store'); // Nombre de la ruta: 'my-schedule.store'
 
     // Ruta para eliminar una cita existente
