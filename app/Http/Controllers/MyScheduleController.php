@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\Scheduler;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Business\StaffServiceChecker;
 use App\Http\Requests\MyScheduleRequest;
 use App\Business\StaffAvailabilityChecker;
 use App\Business\ClientAvailabilityChecker;
@@ -89,6 +90,12 @@ class MyScheduleController extends Controller
         if (!(new ClientAvailabilityChecker(auth()->user(), $from, $to))
             ->check()) {
                 return back()->withErrors('Ya tienes una reserva confirmada en este horario')
+                ->withInput();
+        }
+
+        if (!(new StaffServiceChecker($staffUser, $service))
+            ->check()) {
+                return back()->withErrors("{$staffUser->name} no presta el servico de {$service->name}.")
                 ->withInput();
         }
 

@@ -11,13 +11,15 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    // Utiliza varios traits para proporcionar funcionalidad adicional al modelo User
     use HasRoles, HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Los atributos que son asignables en masa.
      *
      * @var array<int, string>
      */
+    // Define los atributos que se pueden asignar en masa
     protected $fillable = [
         'name',
         'email',
@@ -25,21 +27,29 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Los atributos que deben estar ocultos para la serialización.
      *
      * @var array<int, string>
      */
+    // Define los atributos que deben estar ocultos cuando el modelo se serializa
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
     /**
-     * The attributes that should be cast.
+     * Los atributos que deben ser convertidos a tipos nativos.
      *
      * @var array<string, string>
      */
+    // Define los atributos que deben ser convertidos a tipos nativos
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Define la relación de muchos a muchos con el modelo Service
+    public function service()
+    {
+        return $this->belongsToMany(Service::class);
+    }
 }
