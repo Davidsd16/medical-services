@@ -67,7 +67,6 @@ class MyScheduleController extends Controller
      */
     public function store(MyScheduleRequest $request)
     {
-
         // Obtiene el servicio seleccionado
         $service = Service::find(request('service_id'));
 
@@ -80,26 +79,9 @@ class MyScheduleController extends Controller
         // Busca el usuario del personal basado en el 'staff_user_id' proporcionado en la solicitud
         $staffUser = User::find($request->input('staff_user_id'));
 
-        // Verifica la disponibilidad del personal en el horario especificado
-        if (!(new StaffAvailabilityChecker($staffUser, $from, $to))
-            ->check()) {
-                // Si el horario no está disponible, redirige de vuelta con un mensaje de error y los datos del formulario
-                return back()->withErrors('Este horario no está disponible')->withInput();
-        }
-
-        if (!(new ClientAvailabilityChecker(auth()->user(), $from, $to))
-            ->check()) {
-                return back()->withErrors('Ya tienes una reserva confirmada en este horario')
-                ->withInput();
-        }
-
-        if (!(new StaffServiceChecker($staffUser, $service))
-            ->check()) {
-                return back()->withErrors("{$staffUser->name} no presta el servico de {$service->name}.")
-                ->withInput();
-        }
-
-
+        // Llama a la función que verifica las reglas de reserva para comprobar la disponibilidad del personal, del cliente y la prestación del servicio
+        $this->checkReservationRules($staffUser, auth()->user(), $from, $to, $service);
+        
         // Crea una nueva cita en la base de datos
         Scheduler::create([
             'from' => $from,
@@ -113,6 +95,7 @@ class MyScheduleController extends Controller
         // Redirige a la vista del calendario con un mensaje de éxito
         return redirect()->route('my-schedule.index', [
             'date' => $from->format('Y-m-d')
-        ])->with('success', 'Cita creada con éxito.');
+                ])->with('success', 'Cita creada con éxito.');
     }
+    
 }
