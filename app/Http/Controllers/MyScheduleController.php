@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Scheduler;
-use App\Models\Service;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Service;
+use App\Models\Scheduler;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\MyScheduleRequest;
 use App\Business\StaffAvailabilityChecker;
+use App\Business\ClientAvailabilityChecker;
 
 class MyScheduleController extends Controller
 {
@@ -79,9 +80,16 @@ class MyScheduleController extends Controller
         $staffUser = User::find($request->input('staff_user_id'));
 
         // Verifica la disponibilidad del personal en el horario especificado
-        if (!(new StaffAvailabilityChecker($staffUser, $from, $to))->check()) {
-            // Si el horario no está disponible, redirige de vuelta con un mensaje de error y los datos del formulario
-            return back()->withErrors('Este horario no está disponible')->withInput();
+        if (!(new StaffAvailabilityChecker($staffUser, $from, $to))
+            ->check()) {
+                // Si el horario no está disponible, redirige de vuelta con un mensaje de error y los datos del formulario
+                return back()->withErrors('Este horario no está disponible')->withInput();
+        }
+
+        if (!(new ClientAvailabilityChecker(auth()->user(), $from, $to))
+            ->check()) {
+                return back()->withErrors('Ya tienes una reserva confirmada en este horario')
+                ->withInput();
         }
 
 
