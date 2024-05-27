@@ -8,10 +8,8 @@ use App\Models\Service;
 use App\Models\Scheduler;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Business\StaffServiceChecker;
 use App\Http\Requests\MyScheduleRequest;
-use App\Business\StaffAvailabilityChecker;
-use App\Business\ClientAvailabilityChecker;
+use Illuminate\Console\Scheduling\Schedule;
 
 class MyScheduleController extends Controller
 {
@@ -96,6 +94,21 @@ class MyScheduleController extends Controller
         return redirect()->route('my-schedule.index', [
             'date' => $from->format('Y-m-d')
                 ])->with('success', 'Cita creada con éxito.');
+    }
+
+        /**
+     * Elimina una cita existente.
+     *
+     * @param \App\Models\Scheduler $scheduler
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Scheduler $scheduler)
+    {
+        // Elimina la cita
+        $scheduler->delete();
+
+        // Redirige a la vista del calendario con un mensaje de éxito
+        return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
     }
     
 }

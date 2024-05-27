@@ -42,11 +42,20 @@
                             @else
                                 <!-- Mostrar las citas -->
                                 @foreach ($dayScheduler as $schedule)
-                                    <div class="mt-2 bg-indigo-100 p-3 rounded">
+                                <div class="flex items-center mt-2 bg-indigo-100 p-3 rounded">
+                                    <div class="w-1/2">
                                         <!-- Detalles de la cita -->
                                         <div>{{ $schedule->service->name }} con {{ $schedule->staffUser->name }}</div>
                                         <div>Desde <span class="font-bold">{{ $schedule->from->format('H:i') }}</span> hasta <span class="font-bold">{{ $schedule->to->format('H:i') }}</span></div>
                                     </div>
+                                    <div>
+                                        <form method="POST" action="{{ route('my-schedule.destroy', ['scheduler' => $schedule->id])}}">
+                                            @method('DELETE')
+                                            @csrf
+                                            <x-button>Cancelar</x-button>
+                                        </form>
+                                    </div>
+                                </div>    
                                 @endforeach
                             @endif
                         </div>
