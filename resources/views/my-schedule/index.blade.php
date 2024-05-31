@@ -55,6 +55,10 @@
                                             @method('DELETE')
                                             @csrf
                                             <x-button>Cancelar</x-button>
+                                            <x-link href="{{ route('my-schedule.edit', ['schedule' => $schedule->id]) }}" class="inline-block">
+                                                Actualizar cita
+                                            </x-link>
+                                            
                                         </form>
                                     </div>
                                 </div>    

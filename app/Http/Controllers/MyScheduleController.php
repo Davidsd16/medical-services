@@ -120,4 +120,22 @@ class MyScheduleController extends Controller
         return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
     }
 
+    public function edit(Scheduler $schedule)
+    {
+        $services = Service::all();
+    
+        $staffUsers = User::role('staff')->get();
+
+        return view('my-schedule.edit')->with([
+            'schedule' => $schedule,
+            'services' => $services,
+            'staffUsers' => $staffUsers, 
+        ]);
+    }
+
+    public function update()
+    {
+        
+    }
+
 }

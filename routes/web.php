@@ -35,6 +35,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para eliminar una cita existente
     Route::delete('/my-schedule/{scheduler}', [MyScheduleController::class, 'destroy'])
         ->name('my-schedule.destroy'); // Nombre de la ruta: 'my-schedule.destroy'
+
+    Route::get('/my-schedule/{schedule}/edit', [MyScheduleController::class, 'edit'])
+    ->name('my-schedule.edit');
+
+    Route::put('/my-schedule/{schedule}', [MyScheduleController::class, 'update'])
+        ->name('my-schedule.update');
+    
 });
 
 // Agrupa las rutas de perfil que requieren autenticación
