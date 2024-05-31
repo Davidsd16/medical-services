@@ -136,6 +136,36 @@ class MyScheduleController extends Controller
         ]);
     }
     
-
+    public function update(Scheduler $schedule, MyScheduleRequest $request)
+    {
+        // Busca el servicio seleccionado basado en el ID proporcionado en la solicitud
+        $service = Service::find(request('service_id'));
+    
+        // Combina la fecha y la hora proporcionadas en la solicitud para crear un objeto Carbon de la fecha y hora de inicio
+        $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
+    
+        // Calcula la fecha y hora de finalización sumando la duración del servicio a la fecha y hora de inicio
+        $to = Carbon::parse($from)->addMinutes($service->duration);
+    
+        // Busca el usuario del personal seleccionado basado en el ID proporcionado en la solicitud
+        $staffUser = User::find($request->input('staff_user_id'));
+    
+        // Verifica las reglas de reservación con el usuario del personal, el usuario autenticado, la fecha y hora de inicio y finalización, y el servicio
+        $request->checkReservationRules($staffUser, auth()->user(), $from, $to, $service);
+    
+        // Actualiza la cita con los nuevos valores
+        $schedule->update([
+            'from' => $from,  // Fecha y hora de inicio
+            'to' => $to,  // Fecha y hora de finalización
+            'staff_user_id' => request('staff_user_id'),  // ID del usuario del personal que atenderá
+            'service_id' => $service->id,  // ID del servicio seleccionado
+        ]);
+    
+        // Redirige al índice de citas con un mensaje de éxito
+        return redirect()->route('my-schedule.index', [
+            'date' => $from->format('Y-m-d')  // Fecha de la cita para filtrar el índice
+        ])->with('success', 'Cita creada con éxito.');
+    }
+    
 
 }
