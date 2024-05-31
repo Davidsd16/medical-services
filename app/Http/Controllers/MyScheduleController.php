@@ -122,20 +122,20 @@ class MyScheduleController extends Controller
 
     public function edit(Scheduler $schedule)
     {
+        // Obtiene todos los servicios disponibles
         $services = Service::all();
     
+        // Obtiene todos los usuarios con el rol 'staff'
         $staffUsers = User::role('staff')->get();
-
+    
+        // Retorna la vista 'my-schedule.edit' pasando los datos necesarios
         return view('my-schedule.edit')->with([
-            'schedule' => $schedule,
-            'services' => $services,
-            'staffUsers' => $staffUsers, 
+            'schedule' => $schedule,  // Pasa la cita a editar
+            'services' => $services,  // Pasa la lista de servicios
+            'staffUsers' => $staffUsers,  // Pasa la lista de usuarios del personal
         ]);
     }
+    
 
-    public function update()
-    {
-        
-    }
 
 }
