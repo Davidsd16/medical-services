@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MyScheduleRequest;
 use App\Business\DeletePermissionChecker;
+use App\Notifications\SchedulerCreated;
 use Illuminate\Console\Scheduling\Schedule;
 
 class MyScheduleController extends Controller
@@ -82,7 +83,7 @@ class MyScheduleController extends Controller
         $request->checkReservationRules($staffUser, auth()->user(), $from, $to, $service);
         
         // Crea una nueva cita en la base de datos
-        Scheduler::create([
+        $scheduler = Scheduler::create([
             'from' => $from,
             'to' => $to,
             'status' => 'pending',
@@ -90,6 +91,9 @@ class MyScheduleController extends Controller
             'client_user_id' => auth()->id(),
             'service_id' => $service->id,
         ]);
+
+        // Envía una notificación al usuario del personal con los detalles de la nueva cita creada
+        $staffUser->notify(new SchedulerCreated($scheduler)); 
 
         // Redirige a la vista del calendario con un mensaje de éxito
         return redirect()->route('my-schedule.index', [

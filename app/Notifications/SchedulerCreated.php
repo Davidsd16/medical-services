@@ -46,6 +46,7 @@ class SchedulerCreated extends Notification
     {
         // Construye el mensaje de correo electrónico
         return (new MailMessage)
+                    ->subject('Nueva cita')
                     ->greeting("Hola {$this->scheduler->staffUser->name}") // Saludo personalizado
                     ->line("Hay una nueva cita que debes atender el día {$this->scheduler->from->isoFormat('dddd Do MMMM YYYY')} a las {$this->scheduler->from->format('H:i')}") // Detalles de la cita
                     ->action('Revisar Agenda', url('/dashboard')) // Enlace para revisar la agenda
