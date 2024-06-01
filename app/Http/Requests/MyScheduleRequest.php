@@ -6,6 +6,7 @@ use App\Business\StaffServiceChecker;
 use App\Business\StaffAvailabilityChecker;
 use App\Business\ClientAvailabilityChecker;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Scheduler;
 
 class MyScheduleRequest extends FormRequest
 {
@@ -45,21 +46,30 @@ class MyScheduleRequest extends FormRequest
 
     public function checkReservationRules($staffUser, $clientUser, $from, $to, $service)
     {
-        // Verifica la disponibilidad del personal en el horario especificado
         if (!(new StaffAvailabilityChecker($staffUser, $from, $to))->check()) {
-            // Si el horario no está disponible, redirige de vuelta con un mensaje de error y los datos del formulario
             return back()->withErrors('Este horario no está disponible')->withInput();
         }
     
-        // Verifica la disponibilidad del cliente en el horario especificado
         if (!(new ClientAvailabilityChecker($clientUser, $from, $to))->check()) {
-            // Si el cliente ya tiene una reserva confirmada en este horario, redirige de vuelta con un mensaje de error y los datos del formulario
             return back()->withErrors('Ya tienes una reserva confirmada en este horario')->withInput();
         }
     
-        // Verifica si el personal presta el servicio especificado
         if (!(new StaffServiceChecker($staffUser, $service))->check()) {
-            // Si el personal no presta el servicio, redirige de vuelta con un mensaje de error y los datos del formulario
+            return back()->withErrors("{$staffUser->name} no presta el servicio de {$service->name}.")->withInput();
+        }
+    }
+
+    public function checkRescheduleRules($scheduler, $staffUser, $clientUser, $from, $to, $service)
+    {
+        if (!(new StaffAvailabilityChecker($staffUser, $from, $to, $scheduler))->ignore($scheduler)->check()) {
+            return back()->withErrors('Este horario no está disponible')->withInput();
+        }
+    
+        if (!(new ClientAvailabilityChecker($clientUser, $from, $to))->ignore($scheduler)->check()) {
+            return back()->withErrors('Ya tienes una reserva confirmada en este horario')->withInput();
+        }
+    
+        if (!(new StaffServiceChecker($staffUser, $service))->ignore($scheduler)->check()) {
             return back()->withErrors("{$staffUser->name} no presta el servicio de {$service->name}.")->withInput();
         }
     }

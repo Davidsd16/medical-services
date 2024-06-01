@@ -151,7 +151,7 @@ class MyScheduleController extends Controller
         $staffUser = User::find($request->input('staff_user_id'));
     
         // Verifica las reglas de reservación con el usuario del personal, el usuario autenticado, la fecha y hora de inicio y finalización, y el servicio
-        $request->checkReservationRules($staffUser, auth()->user(), $from, $to, $service);
+        $request->checkRescheduleRules($schedule, $staffUser, auth()->user(), $from, $to, $service);
     
         // Actualiza la cita con los nuevos valores
         $schedule->update([

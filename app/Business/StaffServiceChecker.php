@@ -2,14 +2,17 @@
 
 namespace App\Business;
 
-use App\Models\Service;
 use App\Models\User;
+use App\Models\Service;
+use App\Models\Scheduler;
 
 class StaffServiceChecker
 {
     // Variables protegidas para almacenar el usuario del personal y el servicio
     protected $staffUser;
     protected $service;
+    protected $ignoreScheduler = false;
+    protected $scheduler = null;
 
     // Constructor para inicializar las variables con los valores pasados como parámetros
     public function __construct(User $staffUser, Service $service)
@@ -17,6 +20,16 @@ class StaffServiceChecker
         $this->staffUser = $staffUser; // Usuario del personal
         $this->service = $service; // Servicio
     }
+
+    public function ignore(Scheduler $scheduler)
+    {
+        $this->ignoreScheduler = true;
+
+        $this->scheduler = $scheduler;
+        
+        return $this;
+    }
+
 
     // Método para verificar si el usuario del personal está asociado con el servicio específico
     public function check()
