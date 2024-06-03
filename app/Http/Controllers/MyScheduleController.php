@@ -92,9 +92,7 @@ class MyScheduleController extends Controller
             'service_id' => $service->id,
         ]);
 
-        // Envía una notificación al usuario del personal con los detalles de la nueva cita creada
-        $staffUser->notify(new SchedulerCreated($scheduler)); 
-
+        
         // Redirige a la vista del calendario con un mensaje de éxito
         return redirect()->route('my-schedule.index', [
             'date' => $from->format('Y-m-d')
