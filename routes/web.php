@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MyScheduleController;
+use App\Http\Controllers\StaffSchedulerController;
 use Illuminate\Support\Facades\Route;
 
 // Ruta para la página de inicio
@@ -45,6 +46,9 @@ Route::middleware(['auth', 'verified', 'role:client'])
         Route::put('/{schedule}', [MyScheduleController::class, 'update'])
             ->name('my-schedule.update');
     });
+
+    Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])
+            ->name('staff-scheduler.index');     
 
 // Agrupa las rutas de perfil que requieren autenticación
 Route::middleware('auth')->group(function () {
