@@ -15,8 +15,8 @@ Route::view('/about', 'about');
 
 // Ruta para mostrar el panel de control, requiere autenticación, verificación de email y role de cliente
 Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard'); // Nombre de la ruta: 'dashboard'
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Grupo de rutas que requieren autenticación, verificación de email yrole de cliente
 Route::middleware(['auth', 'verified', 'role:client'])
