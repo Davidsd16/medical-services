@@ -49,17 +49,6 @@
                                         <div>{{ $schedule->service->name }} a {{ $schedule->clientUser->name }}</div>
                                         <div>Desde <span class="font-bold">{{ $schedule->from->format('H:i') }}</span> hasta <span class="font-bold">{{ $schedule->to->format('H:i') }}</span></div>
                                     </div>
-                                    <div>
-                                        <form method="POST" onsubmit="return confirm('Realmente deseas cancelar esta cita?')" 
-                                            action="{{ route('my-schedule.destroy', ['scheduler' => $schedule->id]) }}">
-                                            @method('DELETE')
-                                            @csrf
-                                            <x-button>Cancelar</x-button>
-                                            <x-link href="{{ route('my-schedule.edit', ['schedule' => $schedule->id]) }}" class="inline-block">
-                                                Actualizar cita
-                                            </x-link>                                            
-                                        </form>
-                                    </div>
                                 </div>    
                                 @endforeach
                             @endif
