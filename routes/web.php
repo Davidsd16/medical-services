@@ -12,15 +12,15 @@ Route::get('/', function () {
 // Ruta para la página "about"
 Route::view('/about', 'about');
 
-// Grupo de rutas que requieren autenticación, verificación de email y rol de cliente
-Route::middleware(['auth', 'verified', 'rol:client'])
+// Ruta para mostrar el panel de control, requiere autenticación, verificación de email y role de cliente
+Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard'); // Nombre de la ruta: 'dashboard'
+
+// Grupo de rutas que requieren autenticación, verificación de email yrole de cliente
+Route::middleware(['auth', 'verified', 'role:client'])
     ->prefix('my-schedule')
     ->group(function () {
-        // Ruta para mostrar el panel de control
-        Route::get('/dashboard', function () {
-            return view('dashboard');
-        })->name('dashboard'); // Nombre de la ruta: 'dashboard'
-
         // Ruta para mostrar la agenda del usuario autenticado
         Route::get('/', [MyScheduleController::class, 'index'])
             ->name('my-schedule.index'); // Nombre de la ruta: 'my-schedule.index'
@@ -46,7 +46,6 @@ Route::middleware(['auth', 'verified', 'rol:client'])
             ->name('my-schedule.update');
     });
 
-
 // Agrupa las rutas de perfil que requieren autenticación
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -56,3 +55,4 @@ Route::middleware('auth')->group(function () {
 
 // Requiere las rutas de autenticación generadas por Laravel
 require __DIR__.'/auth.php';
+
