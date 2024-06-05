@@ -26,7 +26,7 @@
                         <!-- Componente del calendario ocupando 1/3 del ancho -->
                         <div class="w-1/3">
                             <!-- Incluir el componente de calendario -->
-                            <x-calendar></x-calendar>
+                            <x-calendar url-handler="{{ route('my-schedule') }}"></x-calendar>
                         </div>
                         <!-- Detalles de las citas ocupando 2/3 del ancho -->
                         <div class="w-2/3">

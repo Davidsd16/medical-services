@@ -46,7 +46,7 @@
                                 <div class="flex items-center mt-2 bg-indigo-100 p-3 rounded">
                                     <div class="w-1/2">
                                         <!-- Detalles de la cita -->
-                                        <div>{{ $schedule->service->name }} con {{ $schedule->staffUser->name }}</div>
+                                        <div>{{ $schedule->service->name }} a {{ $schedule->clientUser->name }}</div>
                                         <div>Desde <span class="font-bold">{{ $schedule->from->format('H:i') }}</span> hasta <span class="font-bold">{{ $schedule->to->format('H:i') }}</span></div>
                                     </div>
                                     <div>

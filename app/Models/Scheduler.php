@@ -10,23 +10,20 @@ class Scheduler extends Model
 {
     use HasFactory;
 
-    // Define la propiedad $from como 'fillable'
-    protected $from = 'fillable';
-
     // Define los campos que se pueden asignar masivamente
     protected $fillable = [
-        'from',
-        'to',
-        'status',
-        'staff_user_id',
-        'client_user_id',
-        'service_id',
+        'from',           // Fecha y hora de inicio de la cita
+        'to',             // Fecha y hora de fin de la cita
+        'status',         // Estado de la cita
+        'staff_user_id',  // ID del usuario del personal asociado a la cita
+        'client_user_id', // ID del usuario cliente asociado a la cita
+        'service_id',     // ID del servicio asociado a la cita
     ];
 
     // Especifica los campos que deben ser tratados como instancias de Carbon (fechas)
     protected $dates = [
-        'from',
-        'to',
+        'from', // Fecha y hora de inicio de la cita
+        'to',   // Fecha y hora de fin de la cita
     ];
 
     /**
@@ -34,7 +31,7 @@ class Scheduler extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function service()
+    public function service(): BelongsTo
     {
         // Una cita pertenece a un servicio
         return $this->belongsTo(Service::class);
@@ -45,9 +42,20 @@ class Scheduler extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function staffUser()
+    public function staffUser(): BelongsTo
     {
         // Una cita pertenece a un usuario del personal (staff)
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'staff_user_id');
+    }
+
+    /**
+     * Define la relación con el usuario cliente asociado a esta cita.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function clientUser(): BelongsTo
+    {
+        // Una cita pertenece a un usuario cliente
+        return $this->belongsTo(User::class, 'client_user_id');
     }
 }
