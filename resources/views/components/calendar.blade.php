@@ -1,3 +1,5 @@
+@props(['urlHandler'])
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -30,7 +32,9 @@
 </div>
 
 <script>
-    // Function to generate the calendar for a specific month and year
+    // Pasar la URL del manejador desde Blade a JavaScript
+    const urlHandler = @json($urlHandler);
+
     function generateCalendar(year, month) {
         const calendarElement = document.getElementById('calendar');
         const currentMonthElement = document.getElementById('currentMonth');
@@ -67,9 +71,11 @@
         // Create boxes for each day of the month
         for (let day = 1; day <= daysInMonth; day++) {
             const dayElement = document.createElement('a');
-            dayElement.href = `/dashboard?date=${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const formattedMonth = String(month + 1).padStart(2, '0');
+            const formattedDay = String(day).padStart(2, '0');
+            dayElement.href = `${urlHandler}?date=${year}-${formattedMonth}-${formattedDay}`;
             dayElement.className = 'text-center py-2 border cursor-pointer';
-            dayElement.innerHTML = `<a href="my-schedule?date=${year}-${month + 1}-${day}">${day}</a>`; // Modified
+            dayElement.innerText = day;
 
             // Check if this date is the current date
             const currentDate = new Date();
@@ -106,7 +112,6 @@
         generateCalendar(currentYear, currentMonth);
     });
 </script>
-
 
 </body>
 </html>
