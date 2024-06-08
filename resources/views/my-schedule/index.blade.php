@@ -1,6 +1,6 @@
 <x-app-layout>
     <!-- Slot para estilos o scripts adicionales en el encabezado -->
-    <x-slot name="headers">
+    <x-slot name="head">
         <style>
             /* Este estilo ocultará elementos con el atributo x-cloak */
             [x-cloak] {
@@ -26,7 +26,7 @@
                         <!-- Componente del calendario ocupando 1/3 del ancho -->
                         <div class="w-1/3">
                             <!-- Incluir el componente de calendario -->
-                            <x-calendar url-handler="{{ route('my-schedule') }}"></x-calendar>
+                            <x-calendar url-handler="{{ route('my-schedule.index') }}"></x-calendar>
                         </div>
                         <!-- Detalles de las citas ocupando 2/3 del ancho -->
                         <div class="w-2/3">

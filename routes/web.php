@@ -47,8 +47,8 @@ Route::middleware(['auth', 'verified', 'role:client'])
             ->name('my-schedule.update');
     });
 
-    Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])
-            ->name('staff-scheduler.index');     
+Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])
+    ->name('staff-scheduler.index');
 
 // Agrupa las rutas de perfil que requieren autenticación
 Route::middleware('auth')->group(function () {
@@ -58,5 +58,4 @@ Route::middleware('auth')->group(function () {
 });
 
 // Requiere las rutas de autenticación generadas por Laravel
-require __DIR__.'/auth.php';
-
+require __DIR__ . '/auth.php';
