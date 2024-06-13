@@ -51,7 +51,7 @@
                                             <span class="text-gray-900">{{ $user->created_at->isoFormat('ddd Do MMM YYYY') }}</span>
                                         </td>
                                         <td class="px-6 py-4 border-b border-gray-200 bg-white text-sm">
-                                            <x-link href="#">Editar</x-link>
+                                            <x-link href="{{ route('users-services.edit', ['user' => $user])}}">Servicios</x-link>
                                         </td>
                                     </tr>
                                     @endforeach

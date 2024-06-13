@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MyScheduleController;
 use App\Http\Controllers\StaffSchedulerController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UsersServicesController;
 use Illuminate\Support\Facades\Route;
 
 // Ruta para la página de inicio
@@ -60,6 +61,10 @@ Route::middleware('role:admin')->group(function(){
     // Define una ruta GET para '/users' que usa el método 'index' del controlador 'UsersController'
     Route::get('/users',[UsersController::class, 'index'])
         ->name('users.index');
+
+    Route::get('users/{user}/services', [UsersServicesController::class, 'edit'])
+        ->name('users-services.edit');
+
 });
 
 
