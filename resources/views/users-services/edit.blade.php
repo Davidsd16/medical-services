@@ -14,8 +14,7 @@
                     <x-auth-validation-errors></x-auth-validation-errors>
                     
                     {{-- Formulario para actualizar servicios --}}
-                    <form action="{{ route('users-services.update', ['users' => $user->id]) }}" method="POST">
-                        @method('PUT') {{-- Método HTTP PUT --}}
+                    <form action="{{ route('users-services.update', ['user' => $user->id]) }}" method="POST">                        @method('PUT') {{-- Método HTTP PUT --}}
                         @csrf {{-- Token CSRF --}}
                         
                         {{-- Contenedor de servicios con columnas --}}
@@ -23,7 +22,7 @@
                             <div>
                                 {{-- Iterar sobre los servicios --}}
                                 @foreach ($services as $service)
-                                    <label for="services_{{ $service->id }}">
+                                    <label for="services_{{ $service->id }}" class="block">
                                         <input type="checkbox" name="services_ids[]" value="{{ $service->id }}" id="services_{{ $service->id }}">
                                         {{ $service->name }}
                                     </label>

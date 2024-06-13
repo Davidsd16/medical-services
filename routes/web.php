@@ -62,8 +62,11 @@ Route::middleware('role:admin')->group(function(){
     Route::get('/users',[UsersController::class, 'index'])
         ->name('users.index');
 
-    Route::get('users/{user}/services', [UsersServicesController::class, 'edit'])
+    Route::get('users/{user}/services/edit', [UsersServicesController::class, 'edit'])
         ->name('users-services.edit');
+    
+        Route::put('/users/{user}/services', [UsersServicesController::class, 'update'])->name('users-services.update');
+
 
 });
 
