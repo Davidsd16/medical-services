@@ -47,8 +47,20 @@ Route::middleware(['auth', 'verified', 'role:client'])
             ->name('my-schedule.update');
     });
 
-Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])
-    ->name('staff-scheduler.index');
+// Define un grupo de rutas que aplican el middleware 'role:staff'
+Route::middleware('role:staff')->group(function(){
+    // Define una ruta GET para '/staff-schedule' que usa el método 'index' del controlador 'StaffSchedulerController'
+    Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])
+        ->name('staff-scheduler.index');
+});
+
+// Define un grupo de rutas que aplican el middleware 'role:admin'
+Route::middleware('role:admin')->group(function(){
+    // Define una ruta GET para '/users' que usa el método 'index' del controlador 'UsersController'
+    Route::get('/users',[UsersController::class, 'index'])
+        ->name('users.index');
+});
+
 
 // Agrupa las rutas de perfil que requieren autenticación
 Route::middleware('auth')->group(function () {
