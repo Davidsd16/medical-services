@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MyScheduleController;
 use App\Http\Controllers\StaffSchedulerController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
 // Ruta para la página de inicio
