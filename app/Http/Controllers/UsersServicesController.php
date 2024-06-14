@@ -31,7 +31,7 @@ class UsersServicesController extends Controller
 
     // Sincroniza los servicios del usuario con los IDs proporcionados en la solicitud
     // Esto actualizará la tabla pivot 'service_user' con los servicios seleccionados
-    $user->services()->sync(request('services_ids'));
+    $user->service()->sync(request('services_ids'));
 
     // Redirige al usuario a la ruta 'users.index' después de actualizar los servicios
     return redirect(route('users.index'));
