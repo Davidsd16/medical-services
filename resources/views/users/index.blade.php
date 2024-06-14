@@ -11,20 +11,29 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
+                            <x-link class="my-2 mr-4 bg-indigo-500 float-right" href="{{ route('users.create') }}">Nuevo usuario</x-link>
                             <table class="min-w-full leading-normal w-full">
                                 <thead>
                                     <tr>
-                                        <th class="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th
+                                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                             Nombre
                                         </th>
-                                        <th class="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th
+                                            class="max-w-[10rem] px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                             Servicios
                                         </th>
-                                        <th class="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            Creado el 
+                                        <th
+                                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Creado el
                                         </th>
-                                        <th class="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th
+                                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                             Acciones
+                                        </th>
+                                        <th
+                                            class="max-w-[10rem] px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Roles
                                         </th>
                                     </tr>
                                 </thead>
@@ -41,7 +50,7 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 border-b border-gray-200 bg-white text-sm">
-                                            @foreach ($user->service as $service)
+                                            @foreach ($user->service as $service) 
                                                 <p class="text-gray-900 whitespace-no-wrap">
                                                     {{ $service->name }}
                                                 </p>
@@ -51,7 +60,16 @@
                                             <span class="text-gray-900">{{ $user->created_at->isoFormat('ddd Do MMM YYYY') }}</span>
                                         </td>
                                         <td class="px-6 py-4 border-b border-gray-200 bg-white text-sm">
-                                            <x-link href="{{ route('users-services.edit', ['user' => $user])}}">Servicios</x-link>
+                                            <x-link href="{{ route('users.edit', ['user' => $user->id]) }}">Editar</x-link>
+                                            <x-link href="{{ route('users-services.edit', ['user' => $user->id]) }}">Servicios</x-link> <!-- Corregido a $user->id -->
+                                        </td>
+                                        <td class="max-w-[10rem] px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                            @foreach ($user->roles as $role)
+                                                <span class="relative inline-block mb-1 px-3 py-1 font-semibold text-green-900 leading-tight">
+                                                    <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                                                    <span class="relative">{{ $role->name }}</span>
+                                                </span>
+                                            @endforeach
                                         </td>
                                     </tr>
                                     @endforeach
