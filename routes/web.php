@@ -5,6 +5,7 @@ use App\Http\Controllers\MyScheduleController;
 use App\Http\Controllers\StaffSchedulerController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UsersServicesController;
+use App\Http\Controllers\OpeningHoursController;
 use Illuminate\Support\Facades\Route;
 
 // Ruta para la página de inicio
@@ -85,6 +86,9 @@ Route::middleware('role:admin')->group(function(){
     // Ruta para actualizar los datos de un usuario.
     Route::put('/users/{user}', [UsersController::class, 'update'])
         ->name('users.update');
+
+    Route::get('/opening-hours/edit', [OpeningHoursController::class, 'edit'])
+        ->name('opening-hours.edit');
 
 });
 

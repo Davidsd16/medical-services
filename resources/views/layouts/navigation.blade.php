@@ -44,7 +44,10 @@
                                     <x-dropdown-link :href="route('users.index')">
                                         Usuarios
                                     </x-dropdown-link>
-                                </x-slot>
+                                    <x-dropdown-link :href="route('opening-hours.edit')">
+                                        Horarios
+                                    </x-dropdown-link>
+                                </x-slot>                                
                             </x-dropdown>
                         </div>
                     @endif
@@ -75,7 +78,7 @@
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
-                            </x-dropdown-link>
+                            </x-dropdown-link>                           
                         </form>
                     </x-slot>
                 </x-dropdown>
