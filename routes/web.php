@@ -62,11 +62,13 @@ Route::middleware('role:admin')->group(function(){
     Route::get('/users',[UsersController::class, 'index'])
         ->name('users.index');
 
+    // Define una ruta GET para editar los servicios de un usuario específico
     Route::get('users/{user}/services/edit', [UsersServicesController::class, 'edit'])
         ->name('users-services.edit');
-    
-        Route::put('/users/{user}/services', [UsersServicesController::class, 'update'])->name('users-services.update');
 
+    // Define una ruta PUT para actualizar los servicios de un usuario específico
+    Route::put('/users/{user}/services', [UsersServicesController::class, 'update'])
+        ->name('users-services.update');
 
 });
 

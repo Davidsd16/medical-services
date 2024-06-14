@@ -23,8 +23,9 @@
                                 {{-- Iterar sobre los servicios --}}
                                 @foreach ($services as $service)
                                     <label for="services_{{ $service->id }}" class="block">
-                                        <input type="checkbox" name="services_ids[]" value="{{ $service->id }}" id="services_{{ $service->id }}">
-                                        {{ $service->name }}
+                                        <input type="checkbox" name="services_ids[]"{{ $user->service->contains($service) ? 'checked' : '' }}
+                                            value="{{ $service->id }}" id="services_{{ $service->id }}">
+                                                {{ $service->name }}
                                     </label>
                                 @endforeach
                             </div>

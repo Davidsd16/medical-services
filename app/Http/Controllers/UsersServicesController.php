@@ -21,4 +21,20 @@ class UsersServicesController extends Controller
             'services' => $services,
         ]);
     }
+
+    public function update(User $user)
+{
+    // Valida que cada elemento en el array 'services_ids' exista en la tabla 'services' en la columna 'id'
+    request()->validate([
+        'services_ids.*' => 'exists:services,id'
+    ]);
+
+    // Sincroniza los servicios del usuario con los IDs proporcionados en la solicitud
+    // Esto actualizará la tabla pivot 'service_user' con los servicios seleccionados
+    $user->services()->sync(request('services_ids'));
+
+    // Redirige al usuario a la ruta 'users.index' después de actualizar los servicios
+    return redirect(route('users.index'));
+}
+
 }
