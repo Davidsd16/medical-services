@@ -70,6 +70,22 @@ Route::middleware('role:admin')->group(function(){
     Route::put('/users/{user}/services', [UsersServicesController::class, 'update'])
         ->name('users-services.update');
 
+    // Ruta para mostrar el formulario de creación de usuarios.
+    Route::get('/users/create', [UsersController::class, 'create'])
+        ->name('users.create');
+
+    // Ruta para almacenar un nuevo usuario.
+    Route::post('/users/store', [UsersController::class, 'store'])
+        ->name('users.store');
+
+    // Ruta para editar un usuario existente.
+    Route::get('/users/{user}/edit', [UsersController::class, 'edit'])
+        ->name('users.edit');
+        
+    // Ruta para actualizar los datos de un usuario.
+    Route::put('/users/{user}', [UsersController::class, 'update'])
+        ->name('users.update');
+
 });
 
 
