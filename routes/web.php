@@ -48,6 +48,9 @@ Route::middleware(['auth', 'verified', 'role:client'])
         // Actualiza una cita específica
         Route::put('/{schedule}', [MyScheduleController::class, 'update'])
             ->name('my-schedule.update');
+
+        Route::put('/opening-hours/update', [OpeningHoursController::class, 'update'])
+            ->name('opening-hours.update');
     });
 
 // Define un grupo de rutas que aplican el middleware 'role:staff'
