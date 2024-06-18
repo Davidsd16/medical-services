@@ -49,8 +49,7 @@ Route::middleware(['auth', 'verified', 'role:client'])
         Route::put('/{schedule}', [MyScheduleController::class, 'update'])
             ->name('my-schedule.update');
 
-        Route::put('/opening-hours/update', [OpeningHoursController::class, 'update'])
-            ->name('opening-hours.update');
+        
     });
 
 // Define un grupo de rutas que aplican el middleware 'role:staff'
@@ -92,6 +91,9 @@ Route::middleware('role:admin')->group(function(){
 
     Route::get('/opening-hours/edit', [OpeningHoursController::class, 'edit'])
         ->name('opening-hours.edit');
+
+    Route::get('/opening-hours/update', [OpeningHoursController::class, 'update'])
+        ->name('opening-hours.update');
 
 });
 

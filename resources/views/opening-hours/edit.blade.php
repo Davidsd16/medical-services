@@ -15,10 +15,14 @@
                     
                     <!-- Componente para mostrar errores de validación -->
                     <x-auth-validation-errors></x-auth-validation-errors>
-                    
+                    @if (session()->has('success'))
+                        <div class="bg-green-300 border-2 border-green-600">
+                            {{ sesssion('success')}}
+                        </div>
+                    @endif
                     <!-- Formulario para actualizar horarios de atención -->
                     <form action="{{ route('opening-hours.update') }}" method="POST">
-                        @method('PUT') <!-- Directiva para utilizar el método HTTP PUT -->
+                        @method('GET') <!-- Directiva para utilizar el método HTTP PUT -->
                         @csrf <!-- Directiva para incluir el token CSRF -->
 
                         <!-- Grid para organizar los campos de entrada -->
