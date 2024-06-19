@@ -51,14 +51,13 @@
                                     </div>
                                     <div>
                                         <form method="POST" onsubmit="return confirm('Realmente deseas cancelar esta cita?')" 
-                                            action="{{ route('my-schedule.destroy', ['scheduler' => $schedule->id])}}">
+                                            action="{{ route('my-schedule.destroy', ['schedule' => $schedule->id])}}">
                                             @method('DELETE')
                                             @csrf
                                             <x-button>Cancelar</x-button>
                                             <x-link href="{{ route('my-schedule.edit', ['schedule' => $schedule->id]) }}" class="inline-block">
                                                 Actualizar cita
-                                            </x-link>
-                                            
+                                            </x-link>                      
                                         </form>
                                     </div>
                                 </div>    
