@@ -17,12 +17,11 @@
                     <x-auth-validation-errors></x-auth-validation-errors>
                     @if (session()->has('success'))
                         <div class="bg-green-300 border-2 border-green-600">
-                            {{ sesssion('success')}}
+                            {{ session('success')}}
                         </div>
                     @endif
                     <!-- Formulario para actualizar horarios de atención -->
                     <form action="{{ route('opening-hours.update') }}" method="POST">
-                        @method('GET') <!-- Directiva para utilizar el método HTTP PUT -->
                         @csrf <!-- Directiva para incluir el token CSRF -->
 
                         <!-- Grid para organizar los campos de entrada -->
@@ -33,8 +32,8 @@
                                     <x-label for="open[{{ $openingHour->day }}]" value="{{ $openingHour->day_name }}" />
 
                                     <!-- Selectores de hora de apertura y cierre -->
-                                    <x-select-time id="open[{{ $openingHour->day }}]" name="open[{{ $openingHour->day }}]" selected-hour='{{ old("open.{$openingHour->day}", $openingHour->open) }}'></x-select-time>
-                                    <x-select-time id="close[{{ $openingHour->day }}]" name="close[{{ $openingHour->day }}]" selected-hour='{{ old("close.{$openingHour->day}", $openingHour->close) }}'></x-select-time>
+                                    <x-select-time id="open[{{ $openingHour->day }}]" name="hours[{{ $openingHour->day }}][open]" selected-hour='{{ old("hours.{$openingHour->day}.open", $openingHour->open) }}'></x-select-time>
+                                    <x-select-time id="close[{{ $openingHour->day }}]" name="hours[{{ $openingHour->day }}][close]" selected-hour='{{ old("hours.{$openingHour->day}.close", $openingHour->close) }}'></x-select-time>
                                 </div>
                             @endforeach
                         </div>

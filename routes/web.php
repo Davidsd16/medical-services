@@ -92,7 +92,7 @@ Route::middleware('role:admin')->group(function(){
     Route::get('/opening-hours/edit', [OpeningHoursController::class, 'edit'])
         ->name('opening-hours.edit');
 
-    Route::get('/opening-hours/update', [OpeningHoursController::class, 'update'])
+    Route::post('/opening-hours/update', [OpeningHoursController::class, 'update'])
         ->name('opening-hours.update');
 
 });

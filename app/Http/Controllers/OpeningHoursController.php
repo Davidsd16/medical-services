@@ -23,11 +23,11 @@ class OpeningHoursController extends Controller
     }
 
     // Método para actualizar los horarios de apertura
-    public function update(OpeningHourRequest $request)
+    public function update(Request $request)
     {
         // Obtén solo los datos de apertura y cierre excluyendo otros datos no deseados
         $data = $request->input('hours');
-
+        
         // Verifica si los datos están presentes y son un array
         if (is_null($data) || !is_array($data)) {
             return back()->withErrors(['message' => 'No se recibieron los datos esperados']);
@@ -44,8 +44,8 @@ class OpeningHoursController extends Controller
             }
         }
     
-        $request->sucsses()->flash('success', 'Los horarios se actualizaron correctamente.');
-
+        // Flash de mensaje de éxito en la sesión
+        $request->session()->flash('success', 'Los horarios se actualizaron correctamente.');
         return back();
     }
     
