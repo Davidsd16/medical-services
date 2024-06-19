@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
- // Importa el modelo OpeningHour
+
 use App\Models\OpeningHour;
 use Illuminate\Http\Request;
-// Importa el formulario de solicitud OpeningHourRequest
-use App\Http\Requests\OpeningHourRequest; 
+use Illuminate\Support\Facades\Session;
 
 class OpeningHoursController extends Controller
 {
@@ -45,8 +44,7 @@ class OpeningHoursController extends Controller
         }
     
         // Flash de mensaje de éxito en la sesión
-        $request->session()->flash('success', 'Los horarios se actualizaron correctamente.');
-        return back();
+        Session::put('success', 'Los horarios se actualizaron correctamente.');        return back();
     }
     
     

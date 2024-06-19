@@ -17,7 +17,7 @@
                     <x-auth-validation-errors></x-auth-validation-errors>
                     @if (session()->has('success'))
                         <div class="bg-green-300 border-2 border-green-600">
-                            {{ session('success')}}
+                            {{ Session::get('success') }}                        
                         </div>
                     @endif
                     <!-- Formulario para actualizar horarios de atención -->
