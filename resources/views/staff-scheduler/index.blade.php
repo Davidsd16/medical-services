@@ -55,7 +55,7 @@
                                             action="{{ route('staff-scheduler.destroy', ['scheduler' => $schedule->id]) }}" class="inline-block">
                                             @method('DELETE')
                                             @csrf
-                                            <x-button :disabled="auth()->user()->cannot('delete', $schedule)">Cancelar</x-button>
+                                            <x-button>Cancelar</x-button>
                                         </form>
                                         {{-- @endcan --}}
                                     </div>

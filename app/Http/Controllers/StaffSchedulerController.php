@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon; // Importa la librería Carbon para manejar fechas
-use App\Http\Controllers\Controller; // Importa el controlador base
+use App\Business\DeletePermissionChecker;
 use App\Models\Scheduler; // Importa el modelo Scheduler
+use App\Http\Controllers\Controller; // Importa el controlador base
 use Illuminate\Http\Request; // Importa la clase Request de Laravel
+use Carbon\Carbon; // Importa la librería Carbon para manejar fechas
 
 class StaffSchedulerController extends Controller
 {
@@ -27,8 +28,16 @@ class StaffSchedulerController extends Controller
         ]);
     }
 
-    public function destroy()
+    public function destroy(Scheduler $schedule)
     {
-        var_dump('llego');
+        if (!$schedule) {
+            return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
+        }
+
+        // Elimina la cita
+        $schedule->delete();
+
+        // Redirige a la vista del calendario con un mensaje de éxito
+        return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
     }
 }

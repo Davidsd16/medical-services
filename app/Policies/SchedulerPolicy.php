@@ -91,8 +91,13 @@ class SchedulerPolicy
             return true;
         }
 
-        // Retorna null si no se cumple ninguna de las condiciones anteriores
+        if (($scheduler->client_user_id != $user->id) AND ($scheduler->staff_user_id != $user->id)) {
+            return false;
+        }
+    
+         // Retorna null si no se cumple ninguna de las condiciones anteriores
         return null;
+        
     }
 
     /**
