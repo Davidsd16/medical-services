@@ -34,12 +34,12 @@ Route::middleware(['auth', 'verified', 'role:client'])
             ->name('my-schedule.create'); // Nombre de la ruta: 'my-schedule.create'
 
         // Ruta para almacenar una nueva cita en la base de datos
-        Route::get('/store', [MyScheduleController::class, 'store'])
-            ->name('my-schedule.store'); // Nombre de la ruta: 'my-schedule.store'
+        Route::get('/store', [MyScheduleController::class, 'store'])->name('my-schedule.store');
+
 
         // Ruta para eliminar una cita existente
-        Route::delete('/{schedule}', [MyScheduleController::class, 'destroy'])
-            ->name('my-schedule.destroy'); // Nombre de la ruta: 'my-schedule.destroy'
+        Route::delete('/{schedule}', [MyScheduleController::class, 'destroy'])->name('my-schedule.destroy');
+
 
         // Muestra el formulario de edición de una cita específica
         Route::get('/{schedule}/edit', [MyScheduleController::class, 'edit'])

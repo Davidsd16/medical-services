@@ -26,7 +26,16 @@ class DeletePermissionChecker
 
         // Verifica si la cita es para una fecha futura
         $isFuture = Carbon::parse($this->scheduler->from)->isFuture();
-
+/*
+        // Debugging output
+        dd([
+            'scheduler_client_user_id' => $this->scheduler->client_user_id,
+            'user_id' => $this->user->id,
+            'isOwner' => $isOwner,
+            'scheduler_from' => $this->scheduler->from,
+            'isFuture' => $isFuture,
+        ]);
+*/
         // Devuelve verdadero si el usuario es el dueño de la cita y la cita es para una fecha futura
         return $isOwner && $isFuture;
     }

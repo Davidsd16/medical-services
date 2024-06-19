@@ -105,10 +105,23 @@ class MyScheduleController extends Controller
      * @param \App\Models\Scheduler $scheduler
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Scheduler $scheduler)
+    public function destroy(Scheduler $schedule)
     {
+        // Verifica que el Scheduler se ha cargado correctamente
+        if (!$schedule) {
+            return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
+        }
+/*
+        // Depuración: Verifica el contenido del Scheduler
+        dd([
+            'scheduler_id' => $schedule->id,
+            'client_user_id' => $schedule->client_user_id,
+            'from' => $schedule->from,
+            'to' => $schedule->to,
+        ]);
+*/
         // Verifica los permisos para eliminar la cita
-        $checker = new DeletePermissionChecker($scheduler, auth()->user());
+        $checker = new DeletePermissionChecker($schedule, auth()->user());
 
         // Si no tiene permisos, redirige de vuelta con un mensaje de error
         if (!$checker->check()) {
@@ -116,7 +129,7 @@ class MyScheduleController extends Controller
         }
 
         // Elimina la cita
-        $scheduler->delete();
+        $schedule->delete();
 
         // Redirige a la vista del calendario con un mensaje de éxito
         return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
