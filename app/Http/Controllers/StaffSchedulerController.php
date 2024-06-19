@@ -26,4 +26,9 @@ class StaffSchedulerController extends Controller
             'dayScheduler' => $dayScheduler, // Pasa el horario del día a la vista
         ]);
     }
+
+    public function destroy()
+    {
+        var_dump('llego');
+    }
 }

@@ -49,6 +49,16 @@
                                         <div>{{ $schedule->service->name }} a {{ $schedule->clientUser->name }}</div>
                                         <div>Desde <span class="font-bold">{{ $schedule->from->format('H:i') }}</span> hasta <span class="font-bold">{{ $schedule->to->format('H:i') }}</span></div>
                                     </div>
+                                    <div class="w-1/2 text-right">
+                                        {{-- @can('delete', $schedule) --}}
+                                        <form method="POST" onsubmit="return confirm('¿Realmente deseas cancelar esta cita?')"
+                                            action="{{ route('staff-scheduler.destroy', ['scheduler' => $schedule->id]) }}" class="inline-block">
+                                            @method('DELETE')
+                                            @csrf
+                                            <x-button :disabled="auth()->user()->cannot('delete', $schedule)">Cancelar</x-button>
+                                        </form>
+                                        {{-- @endcan --}}
+                                    </div>
                                 </div>    
                                 @endforeach
                             @endif

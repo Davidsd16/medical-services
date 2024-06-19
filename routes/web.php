@@ -26,37 +26,32 @@ Route::middleware(['auth', 'verified', 'role:client'])
     ->prefix('my-schedule')
     ->group(function () {
         // Ruta para mostrar la agenda del usuario autenticado
-        Route::get('/', [MyScheduleController::class, 'index'])
-            ->name('my-schedule.index'); // Nombre de la ruta: 'my-schedule.index'
+        Route::get('/', [MyScheduleController::class, 'index'])->name('my-schedule.index'); 
 
         // Ruta para mostrar el formulario de creación de una nueva cita
-        Route::get('/create', [MyScheduleController::class, 'create'])
-            ->name('my-schedule.create'); // Nombre de la ruta: 'my-schedule.create'
+        Route::get('/create', [MyScheduleController::class, 'create'])->name('my-schedule.create');
 
         // Ruta para almacenar una nueva cita en la base de datos
         Route::get('/store', [MyScheduleController::class, 'store'])->name('my-schedule.store');
 
-
         // Ruta para eliminar una cita existente
         Route::delete('/{schedule}', [MyScheduleController::class, 'destroy'])->name('my-schedule.destroy');
 
-
         // Muestra el formulario de edición de una cita específica
-        Route::get('/{schedule}/edit', [MyScheduleController::class, 'edit'])
-            ->name('my-schedule.edit');
+        Route::get('/{schedule}/edit', [MyScheduleController::class, 'edit'])->name('my-schedule.edit');
 
         // Actualiza una cita específica
-        Route::put('/{schedule}', [MyScheduleController::class, 'update'])
-            ->name('my-schedule.update');
+        Route::put('/{schedule}', [MyScheduleController::class, 'update'])->name('my-schedule.update');
 
-        
     });
 
 // Define un grupo de rutas que aplican el middleware 'role:staff'
 Route::middleware('role:staff')->group(function(){
     // Define una ruta GET para '/staff-schedule' que usa el método 'index' del controlador 'StaffSchedulerController'
-    Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])
-        ->name('staff-scheduler.index');
+    Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])->name('staff-scheduler.index');
+
+    Route::delete('/staff-scheduler/{scheduler}', [StaffSchedulerController::class, 'destroy'])->name('staff-scheduler.destroy');
+
 });
 
 // Define un grupo de rutas que aplican el middleware 'role:admin'
