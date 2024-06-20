@@ -52,6 +52,11 @@ Route::middleware('role:staff')->group(function(){
 
     Route::delete('/staff-scheduler/{scheduler}', [StaffSchedulerController::class, 'destroy'])->name('staff-scheduler.destroy');
 
+    Route::get('/staff-scheduler/{scheduler}/edit', [StaffSchedulerController::class, 'edit'])->name('staff-scheduler.edit');
+
+    Route::put('/staff-scheduler/{scheduler}', [StaffSchedulerController::class, 'updeta'])->name('staff-scheduler.update');
+
+
 });
 
 // Define un grupo de rutas que aplican el middleware 'role:admin'

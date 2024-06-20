@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
-use App\Business\DeletePermissionChecker;
 use App\Models\Scheduler; // Importa el modelo Scheduler
 use App\Http\Controllers\Controller; // Importa el controlador base
 use Illuminate\Http\Request; // Importa la clase Request de Laravel
@@ -26,6 +26,13 @@ class StaffSchedulerController extends Controller
         return view('staff-scheduler.index')->with([
             'date' => $date, // Pasa la fecha a la vista
             'dayScheduler' => $dayScheduler, // Pasa el horario del día a la vista
+        ]);
+    }
+
+    public function edit(Scheduler $schedule)
+    {
+        return view('staff-scheduler.edit')->with([
+            'schedule' => $schedule,   
         ]);
     }
 

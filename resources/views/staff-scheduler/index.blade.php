@@ -35,14 +35,14 @@
 
                             {{-- Bucle para mostrar las citas del día --}}
                             @if ($dayScheduler->isEmpty())
-                                <!-- Mensaje si no hay citas para el día -->
-                                <div class="mt-2 bg-red-100 p-3 rounded">
-                                    <div>No hay citas para la fecha seleccionada.</div>
-                                </div>
+                            <!-- Mensaje si no hay citas para el día -->
+                            <div class="mt-2 bg-red-100 p-3 rounded">
+                                <div>No hay citas para la fecha seleccionada.</div>
+                            </div>
                             @else
-                                <x-auth-validation-errors></x-auth-validation-errors>
-                                <!-- Mostrar las citas -->
-                                @foreach ($dayScheduler as $schedule)
+                            <x-auth-validation-errors></x-auth-validation-errors>
+                            <!-- Mostrar las citas -->
+                            @foreach ($dayScheduler as $schedule)
                                 <div class="flex items-center mt-2 bg-indigo-100 p-3 rounded">
                                     <div class="w-1/2">
                                         <!-- Detalles de la cita -->
@@ -50,17 +50,18 @@
                                         <div>Desde <span class="font-bold">{{ $schedule->from->format('H:i') }}</span> hasta <span class="font-bold">{{ $schedule->to->format('H:i') }}</span></div>
                                     </div>
                                     <div class="w-1/2 text-right">
-                                        {{-- @can('delete', $schedule) --}}
                                         <form method="POST" onsubmit="return confirm('¿Realmente deseas cancelar esta cita?')"
                                             action="{{ route('staff-scheduler.destroy', ['scheduler' => $schedule->id]) }}" class="inline-block">
                                             @method('DELETE')
                                             @csrf
                                             <x-button>Cancelar</x-button>
                                         </form>
-                                        {{-- @endcan --}}
+                                        <x-link :disabled="auth()->user()->cannot('update', $schedule)" href="{{ route('staff-scheduler.edit', ['scheduler' => $schedule->id]) }}">
+                                            Editar
+                                        </x-link>
                                     </div>
-                                </div>    
-                                @endforeach
+                                </div>
+                            @endforeach
                             @endif
                         </div>
                     </div>
