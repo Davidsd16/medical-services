@@ -76,6 +76,11 @@ class SchedulerPolicy
      */
     public function delete(User $user, Scheduler $scheduler)
     {
+        // Verifica si los atributos 'to' y 'from' son null
+        if ($scheduler->to === null || $scheduler->from === null) {
+            return false;
+        }
+
         // Impide la eliminación si la cita ya ha pasado
         if ($scheduler->to->isPast()) {
             return false;
@@ -87,18 +92,14 @@ class SchedulerPolicy
         }
 
         // Permite la eliminación si el usuario es el cliente o el personal asociado a la cita
-        if (($scheduler->client_user_id == $user->id) OR ($scheduler->staff_user_id == $user->id)) {
+        if ($scheduler->client_user_id == $user->id || $scheduler->staff_user_id == $user->id) {
             return true;
         }
 
-        if (($scheduler->client_user_id != $user->id) AND ($scheduler->staff_user_id != $user->id)) {
-            return false;
-        }
-    
-         // Retorna null si no se cumple ninguna de las condiciones anteriores
-        return null;
-        
+        // Retorna false por defecto si ninguna condición se cumple
+        return false;
     }
+
 
     /**
      * Determina si el usuario puede restaurar un modelo específico de Scheduler.

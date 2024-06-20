@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Business\DeletePermissionChecker;
 use App\Models\Scheduler; // Importa el modelo Scheduler
 use App\Http\Controllers\Controller; // Importa el controlador base
@@ -34,6 +35,10 @@ class StaffSchedulerController extends Controller
             return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
         }
 
+        if (Gate::denies('delete', $schedule)) {
+            return back()->withErrors('No es posible cancelar esta cita');
+        }
+        
         // Elimina la cita
         $schedule->delete();
 
