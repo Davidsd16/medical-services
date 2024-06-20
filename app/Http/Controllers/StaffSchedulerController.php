@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StaffScheduleRequest;
 use App\Models\Scheduler; // Importa el modelo Scheduler
@@ -35,30 +36,33 @@ class StaffSchedulerController extends Controller
     }
 
     public function update(Scheduler $scheduler, StaffScheduleRequest $request)
-    {
-        // Obtiene el servicio asociado a la cita
-        $service = $scheduler->service;
+{
+    $staffUser = auth()->user(); // Obtén el usuario del personal autenticado
+    $clientUser = User::find($scheduler->client_user_id); // Obtén el usuario cliente relacionado con la cita
 
-        // Parsear la fecha y la hora de inicio de la solicitud
-        $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
-    
-        // Calcular la hora de finalización sumando la duración del servicio a la hora de inicio
-        $to = Carbon::parse($from)->addMinutes($service->duration);
-    
-        // Verificar las reglas de reprogramación para la cita
-        $request->checkRescheduleRules($scheduler, auth()->user(), $scheduler->client_user, $from, $to, $service);
-    
-        // Actualizar los campos 'from' y 'to' de la cita en la base de datos
-        $scheduler->update([
-            'from' => $from,  
-            'to' => $to,  
-        ]);
-    
-        // Redirigir al índice del horario del personal con un mensaje de éxito
-        return redirect()->route('staff-scheduler.index', [
-            'date' => $from->format('Y-m-d')  
-        ])->with('success', 'Cita actualizada con éxito.');
+    // Asegúrate de que $clientUser no sea nulo
+    if (!$clientUser) {
+        return back()->withErrors('Usuario cliente no encontrado')->withInput();
     }
+
+    $service = $scheduler->service;
+    $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
+    $to = Carbon::parse($from)->addMinutes($service->duration);
+
+    // Verifica las reglas de reprogramación
+    $request->checkRescheduleRules($scheduler, $staffUser, $clientUser, $from, $to, $service);
+
+    // Actualiza los campos 'from' y 'to' de la cita en la base de datos
+    $scheduler->update([
+        'from' => $from,  
+        'to' => $to,  
+    ]);
+
+    // Redirige al índice del horario del personal con un mensaje de éxito
+    return redirect()->route('staff-scheduler.index', [
+        'date' => $from->format('Y-m-d')  
+    ])->with('success', 'Cita actualizada con éxito.');
+}
     
 
     public function destroy(Scheduler $schedule)
