@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\StaffScheduleRequest;
 use App\Models\Scheduler; // Importa el modelo Scheduler
 use App\Http\Controllers\Controller; // Importa el controlador base
 use Illuminate\Http\Request; // Importa la clase Request de Laravel
@@ -33,6 +33,33 @@ class StaffSchedulerController extends Controller
     {
         return view('staff-scheduler.edit', compact('scheduler'));
     }
+
+    public function update(Scheduler $scheduler, StaffScheduleRequest $request)
+    {
+        // Obtiene el servicio asociado a la cita
+        $service = $scheduler->service;
+
+        // Parsear la fecha y la hora de inicio de la solicitud
+        $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
+    
+        // Calcular la hora de finalización sumando la duración del servicio a la hora de inicio
+        $to = Carbon::parse($from)->addMinutes($service->duration);
+    
+        // Verificar las reglas de reprogramación para la cita
+        $request->checkRescheduleRules($scheduler, auth()->user(), $scheduler->client_user, $from, $to, $service);
+    
+        // Actualizar los campos 'from' y 'to' de la cita en la base de datos
+        $scheduler->update([
+            'from' => $from,  
+            'to' => $to,  
+        ]);
+    
+        // Redirigir al índice del horario del personal con un mensaje de éxito
+        return redirect()->route('staff-scheduler.index', [
+            'date' => $from->format('Y-m-d')  
+        ])->with('success', 'Cita actualizada con éxito.');
+    }
+    
 
     public function destroy(Scheduler $schedule)
     {
