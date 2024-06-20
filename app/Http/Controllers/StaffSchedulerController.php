@@ -29,11 +29,9 @@ class StaffSchedulerController extends Controller
         ]);
     }
 
-    public function edit(Scheduler $schedule)
+    public function edit(Scheduler $scheduler)
     {
-        return view('staff-scheduler.edit')->with([
-            'schedule' => $schedule,   
-        ]);
+        return view('staff-scheduler.edit', compact('scheduler'));
     }
 
     public function destroy(Scheduler $schedule)

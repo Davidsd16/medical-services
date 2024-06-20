@@ -54,8 +54,7 @@ Route::middleware('role:staff')->group(function(){
 
     Route::get('/staff-scheduler/{scheduler}/edit', [StaffSchedulerController::class, 'edit'])->name('staff-scheduler.edit');
 
-    Route::put('/staff-scheduler/{scheduler}', [StaffSchedulerController::class, 'updeta'])->name('staff-scheduler.update');
-
+    Route::put('/staff-scheduler/{scheduler}', [StaffSchedulerController::class, 'update'])->name('staff-schedule.update');
 
 });
 
