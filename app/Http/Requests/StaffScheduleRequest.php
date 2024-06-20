@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StaffScheduleRequest extends FormRequest
 {
+    use ManagesReservationRules;
+    
     /**
      * Determina si el usuario está autorizado para realizar esta solicitud.
      *
