@@ -1,124 +1,63 @@
 <?php
 
-namespace App\Http\Controllers;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MyScheduleController;
+use App\Http\Controllers\StaffSchedulerController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UsersServicesController;
+use App\Http\Controllers\OpeningHoursController;
+use Illuminate\Support\Facades\Route;
 
-use App\Models\User;
-use App\Models\Scheduler;
-use App\Http\Requests\StaffScheduleRequest;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use App\Http\Controllers\Controller;
+// Ruta para la página de inicio
+Route::get('/', function () {
+    return view('welcome');
+});
 
-class StaffSchedulerController extends Controller
-{
-    /**
-     * Muestra las citas del personal para una fecha específica.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
-    public function index(Request $request)
-    {
-        // Parsea la fecha desde el query string del request
-        $date = Carbon::parse($request->query('date'));
+// Ruta para la página "about"
+Route::view('/about', 'about');
 
-        // Obtiene las citas del usuario actual para la fecha especificada
-        $dayScheduler = Scheduler::where('staff_user_id', auth()->id())
-            ->whereDate('from', $date->format('Y-m-d'))
-            ->orderBy('from', 'ASC')
-            ->get();
+// Ruta para mostrar el panel de control, requiere autenticación, verificación de email y role de cliente
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-        // Retorna la vista 'staff-scheduler.index' con la fecha y las citas obtenidas
-        return view('staff-scheduler.index')->with([
-            'date' => $date,
-            'dayScheduler' => $dayScheduler,
-        ]);
-    }
+// Grupo de rutas que requieren autenticación, verificación de email y rol de cliente
+Route::middleware(['auth', 'verified', 'role:client'])->prefix('my-schedule')->group(function () {
+    Route::get('/', [MyScheduleController::class, 'index'])->name('my-schedule.index'); 
+    Route::get('/create', [MyScheduleController::class, 'create'])->name('my-schedule.create');
+    Route::post('/store', [MyScheduleController::class, 'store'])->name('my-schedule.store'); // Método POST para almacenar
+    Route::delete('/{schedule}', [MyScheduleController::class, 'destroy'])->name('my-schedule.destroy');
+    Route::get('/{schedule}/edit', [MyScheduleController::class, 'edit'])->name('my-schedule.edit');
+    Route::put('/{schedule}', [MyScheduleController::class, 'update'])->name('my-schedule.update');
+});
 
-    /**
-     * Muestra el formulario de edición de una cita específica.
-     *
-     * @param  \App\Models\Scheduler  $scheduler
-     * @return \Illuminate\View\View
-     */
-    public function edit(Scheduler $scheduler)
-    {
-        // Retorna la vista 'staff-scheduler.edit' con los datos de la cita a editar
-        return view('staff-scheduler.edit', compact('scheduler'));
-    }
+// Grupo de rutas que requieren autenticación y rol de staff
+Route::middleware(['auth', 'role:staff'])->group(function(){
+    Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])->name('staff-scheduler.index');
+    Route::delete('/staff-schedule/{scheduler}', [StaffSchedulerController::class, 'destroy'])->name('staff-scheduler.destroy');
+    Route::get('/staff-schedule/{scheduler}/edit', [StaffSchedulerController::class, 'edit'])->name('staff-scheduler.edit');
+    Route::put('/staff-schedule/{scheduler}', [StaffSchedulerController::class, 'update'])->name('staff-scheduler.update');
+});
 
-    /**
-     * Actualiza una cita específica del personal.
-     *
-     * @param  \App\Models\Scheduler  $scheduler
-     * @param  \App\Http\Requests\StaffScheduleRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(Scheduler $scheduler, StaffScheduleRequest $request)
-    {
-        // Obtiene el usuario del personal autenticado
-        $staffUser = auth()->user();
-        
-        // Encuentra al usuario cliente asociado a la cita
-        $clientUser = User::find($scheduler->client_user_id);
+// Grupo de rutas que requieren autenticación y rol de admin
+Route::middleware(['auth', 'role:admin'])->group(function(){
+    Route::get('/users', [UsersController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [UsersController::class, 'create'])->name('users.create');
+    Route::post('/users/store', [UsersController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UsersController::class, 'update'])->name('users.update');
+    Route::get('users/{user}/services/edit', [UsersServicesController::class, 'edit'])->name('users-services.edit');
+    Route::put('/users/{user}/services', [UsersServicesController::class, 'update'])->name('users-services.update');
+    Route::get('/opening-hours/edit', [OpeningHoursController::class, 'edit'])->name('opening-hours.edit');
+    Route::post('/opening-hours/update', [OpeningHoursController::class, 'update'])->name('opening-hours.update');
+});
 
-        // Si el usuario cliente no existe, retorna con un mensaje de error
-        if (!$clientUser) {
-            return back()->withErrors('Usuario cliente no encontrado')->withInput();
-        }
+// Agrupa las rutas de perfil que requieren autenticación
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-        // Obtiene el servicio asociado a la cita
-        $service = $scheduler->service;
-
-        // Parsea la fecha y hora desde el input del formulario
-        $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
-        
-        // Calcula la fecha de fin sumando la duración del servicio
-        $to = Carbon::parse($from)->addMinutes($service->duration);
-
-        // Verifica las reglas de reprogramación con el método del request
-        $request->checkRescheduleRules($scheduler, $staffUser, $clientUser, $from, $to, $service);
-
-        // Actualiza la cita con los nuevos datos
-        $scheduler->update([
-            'from' => $from,
-            'to' => $to,
-        ]);
-
-        // Redirige de vuelta al índice de citas del personal con un mensaje de éxito
-        return redirect()->route('staff-scheduler.index', [
-            'date' => $from->format('Y-m-d')
-        ])->with('success', 'Cita actualizada con éxito.');
-    }
-
-    /**
-     * Elimina una cita específica del personal.
-     *
-     * @param  \App\Models\Scheduler  $scheduler
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroy(Scheduler $scheduler)
-    {
-        // Carga los usuarios cliente y del personal asociados a la cita
-        $scheduler->load(['clientUser', 'staffUser']);
-        
-        // Obtiene al usuario autenticado
-        $user = auth()->user();
-        
-        // Si la cita no existe, redirige con un mensaje de error
-        if (!$scheduler) {
-            return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
-        }
-
-        // Verifica si el usuario tiene permisos para eliminar la cita
-        if ($scheduler->client_user_id != $user->id && $scheduler->staff_user_id != $user->id) {
-            return back()->withErrors('No tienes permiso para cancelar esta cita.');
-        }
-
-        // Elimina la cita
-        $scheduler->delete();
-
-        // Redirige de vuelta al índice de citas del personal con un mensaje de éxito
-        return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
-    }
-}
+// Requiere las rutas de autenticación generadas por Laravel
+require __DIR__ . '/auth.php';
