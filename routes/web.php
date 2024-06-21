@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified', 'role:client'])
     });
 
 // Define un grupo de rutas que aplican el middleware 'role:staff'
-Route::middleware('role:staff')->group(function(){
+Route::middleware(['auth', 'role:staff'])->group(function(){
     // Define una ruta GET para '/staff-schedule' que usa el método 'index' del controlador 'StaffSchedulerController'
     Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])->name('staff-scheduler.index');
 

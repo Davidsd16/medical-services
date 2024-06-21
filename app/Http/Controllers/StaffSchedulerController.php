@@ -3,30 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Gate;
+use App\Models\Scheduler;
 use App\Http\Requests\StaffScheduleRequest;
-use App\Models\Scheduler; // Importa el modelo Scheduler
-use App\Http\Controllers\Controller; // Importa el controlador base
-use Illuminate\Http\Request; // Importa la clase Request de Laravel
-use Carbon\Carbon; // Importa la librería Carbon para manejar fechas
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 
 class StaffSchedulerController extends Controller
 {
-    // Método para manejar la solicitud de visualización del horario del personal
-    public function index(Request $request) {
-        // Parsear la fecha de la consulta de solicitud
+    public function index(Request $request)
+    {
         $date = Carbon::parse($request->query('date'));
 
-        // Obtener el horario del día para el usuario autenticado
-        $dayScheduler = Scheduler::where('staff_user_id', auth()->id()) // Filtra por el ID del usuario autenticado
-            ->whereDate('from', $date->format('Y-m-d')) // Filtra por la fecha especificada
-            ->orderBy('from', 'ASC') // Ordena los resultados por la hora de inicio de forma ascendente
+        $dayScheduler = Scheduler::where('staff_user_id', auth()->id())
+            ->whereDate('from', $date->format('Y-m-d'))
+            ->orderBy('from', 'ASC')
             ->get();
 
-        // Devuelve la vista 'staff-scheduler.index' con los datos necesarios
         return view('staff-scheduler.index')->with([
-            'date' => $date, // Pasa la fecha a la vista
-            'dayScheduler' => $dayScheduler, // Pasa el horario del día a la vista
+            'date' => $date,
+            'dayScheduler' => $dayScheduler,
         ]);
     }
 
@@ -36,53 +32,56 @@ class StaffSchedulerController extends Controller
     }
 
     public function update(Scheduler $scheduler, StaffScheduleRequest $request)
-{
-    $staffUser = auth()->user(); // Obtén el usuario del personal autenticado
-    $clientUser = User::find($scheduler->client_user_id); // Obtén el usuario cliente relacionado con la cita
+    {
+        $staffUser = auth()->user();
+        $clientUser = User::find($scheduler->client_user_id);
 
-    // Asegúrate de que $clientUser no sea nulo
-    if (!$clientUser) {
-        return back()->withErrors('Usuario cliente no encontrado')->withInput();
+        if (!$clientUser) {
+            return back()->withErrors('Usuario cliente no encontrado')->withInput();
+        }
+
+        $service = $scheduler->service;
+        $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
+        $to = Carbon::parse($from)->addMinutes($service->duration);
+
+        $request->checkRescheduleRules($scheduler, $staffUser, $clientUser, $from, $to, $service);
+
+        $scheduler->update([
+            'from' => $from,
+            'to' => $to,
+        ]);
+
+        return redirect()->route('staff-scheduler.index', [
+            'date' => $from->format('Y-m-d')
+        ])->with('success', 'Cita actualizada con éxito.');
     }
-
-    $service = $scheduler->service;
-    $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
-    $to = Carbon::parse($from)->addMinutes($service->duration);
-
-    // Verifica las reglas de reprogramación
-    $request->checkRescheduleRules($scheduler, $staffUser, $clientUser, $from, $to, $service);
-
-    // Actualiza los campos 'from' y 'to' de la cita en la base de datos
-    $scheduler->update([
-        'from' => $from,  
-        'to' => $to,  
-    ]);
-
-    // Redirige al índice del horario del personal con un mensaje de éxito
-    return redirect()->route('staff-scheduler.index', [
-        'date' => $from->format('Y-m-d')  
-    ])->with('success', 'Cita actualizada con éxito.');
-}
-    
 
     public function destroy(Scheduler $scheduler)
     {
-        
-        // Carga las relaciones necesarias
         $scheduler->load(['clientUser', 'staffUser']);
+        
+        $user = auth()->user();
+        
+        dd([
+            'scheduler_id' => $scheduler->id,
+            'scheduler_staff_user_id' => $scheduler->staff_user_id,
+            'scheduler_client_user_id' => $scheduler->client_user_id,
+            'user_id' => $user ? $user->id : null,
+            'scheduler_to' => $scheduler->to,
+            'scheduler_from' => $scheduler->from,
+            'scheduler_from_diff_in_hours' => $scheduler->from ? $scheduler->from->diffInHours() : null,
+        ]);
 
         if (!$scheduler) {
             return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
         }
 
-        if (Gate::denies('delete', $scheduler)) {
-            return back()->withErrors('No es posible cancelar esta cita');
+        if ($scheduler->client_user_id != $user->id && $scheduler->staff_user_id != $user->id) {
+            return back()->withErrors('No tienes permiso para cancelar esta cita.');
         }
 
-        // Elimina la cita
         $scheduler->delete();
 
-        // Redirige a la vista del calendario con un mensaje de éxito
         return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
     }
 }
