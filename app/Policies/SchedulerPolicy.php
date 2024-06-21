@@ -59,7 +59,7 @@ class SchedulerPolicy
         }
 
         // Permite la actualización si el usuario es el cliente o el personal asociado a la cita
-        if (($scheduler->client_user_id == $user->id) OR ($scheduler->staff_user_id == $user->id)) {
+        if ($scheduler->client_user_id == $user->id || $scheduler->staff_user_id == $user->id) {
             return true;
         }
 
@@ -74,8 +74,10 @@ class SchedulerPolicy
      * @param  \App\Models\Scheduler  $scheduler
      * @return \Illuminate\Auth\Access\Response|bool
      */
+
     public function delete(User $user, Scheduler $scheduler)
     {
+        // dd($scheduler->staff_user_id);
         // Verifica si los atributos 'to' y 'from' son null
         if ($scheduler->to === null || $scheduler->from === null) {
             return false;
@@ -90,7 +92,7 @@ class SchedulerPolicy
         if ($scheduler->from->diffInHours() < 24) {
             return false;
         }
-
+        
         // Permite la eliminación si el usuario es el cliente o el personal asociado a la cita
         if ($scheduler->client_user_id == $user->id || $scheduler->staff_user_id == $user->id) {
             return true;
@@ -99,7 +101,6 @@ class SchedulerPolicy
         // Retorna false por defecto si ninguna condición se cumple
         return false;
     }
-
 
     /**
      * Determina si el usuario puede restaurar un modelo específico de Scheduler.

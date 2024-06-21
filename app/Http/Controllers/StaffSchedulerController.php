@@ -65,18 +65,22 @@ class StaffSchedulerController extends Controller
 }
     
 
-    public function destroy(Scheduler $schedule)
+    public function destroy(Scheduler $scheduler)
     {
-        if (!$schedule) {
+        
+        // Carga las relaciones necesarias
+        $scheduler->load(['clientUser', 'staffUser']);
+
+        if (!$scheduler) {
             return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
         }
 
-        if (Gate::denies('delete', $schedule)) {
+        if (Gate::denies('delete', $scheduler)) {
             return back()->withErrors('No es posible cancelar esta cita');
         }
-        
+
         // Elimina la cita
-        $schedule->delete();
+        $scheduler->delete();
 
         // Redirige a la vista del calendario con un mensaje de éxito
         return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
