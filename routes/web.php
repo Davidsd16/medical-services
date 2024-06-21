@@ -1,108 +1,124 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\MyScheduleController;
-use App\Http\Controllers\StaffSchedulerController;
-use App\Http\Controllers\UsersController;
-use App\Http\Controllers\UsersServicesController;
-use App\Http\Controllers\OpeningHoursController;
-use Illuminate\Support\Facades\Route;
+namespace App\Http\Controllers;
 
-// Ruta para la página de inicio
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Models\User;
+use App\Models\Scheduler;
+use App\Http\Requests\StaffScheduleRequest;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 
-// Ruta para la página "about"
-Route::view('/about', 'about');
+class StaffSchedulerController extends Controller
+{
+    /**
+     * Muestra las citas del personal para una fecha específica.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+    public function index(Request $request)
+    {
+        // Parsea la fecha desde el query string del request
+        $date = Carbon::parse($request->query('date'));
 
-// Ruta para mostrar el panel de control, requiere autenticación, verificación de email y role de cliente
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+        // Obtiene las citas del usuario actual para la fecha especificada
+        $dayScheduler = Scheduler::where('staff_user_id', auth()->id())
+            ->whereDate('from', $date->format('Y-m-d'))
+            ->orderBy('from', 'ASC')
+            ->get();
 
-// Grupo de rutas que requieren autenticación, verificación de email yrole de cliente
-Route::middleware(['auth', 'verified', 'role:client'])
-    ->prefix('my-schedule')
-    ->group(function () {
-        // Ruta para mostrar la agenda del usuario autenticado
-        Route::get('/', [MyScheduleController::class, 'index'])->name('my-schedule.index'); 
+        // Retorna la vista 'staff-scheduler.index' con la fecha y las citas obtenidas
+        return view('staff-scheduler.index')->with([
+            'date' => $date,
+            'dayScheduler' => $dayScheduler,
+        ]);
+    }
 
-        // Ruta para mostrar el formulario de creación de una nueva cita
-        Route::get('/create', [MyScheduleController::class, 'create'])->name('my-schedule.create');
+    /**
+     * Muestra el formulario de edición de una cita específica.
+     *
+     * @param  \App\Models\Scheduler  $scheduler
+     * @return \Illuminate\View\View
+     */
+    public function edit(Scheduler $scheduler)
+    {
+        // Retorna la vista 'staff-scheduler.edit' con los datos de la cita a editar
+        return view('staff-scheduler.edit', compact('scheduler'));
+    }
 
-        // Ruta para almacenar una nueva cita en la base de datos
-        Route::get('/store', [MyScheduleController::class, 'store'])->name('my-schedule.store');
-
-        // Ruta para eliminar una cita existente
-        Route::delete('/{schedule}', [MyScheduleController::class, 'destroy'])->name('my-schedule.destroy');
-
-        // Muestra el formulario de edición de una cita específica
-        Route::get('/{schedule}/edit', [MyScheduleController::class, 'edit'])->name('my-schedule.edit');
-
-        // Actualiza una cita específica
-        Route::put('/{schedule}', [MyScheduleController::class, 'update'])->name('my-schedule.update');
-
-    });
-
-// Define un grupo de rutas que aplican el middleware 'role:staff'
-Route::middleware(['auth', 'role:staff'])->group(function(){
-    // Define una ruta GET para '/staff-schedule' que usa el método 'index' del controlador 'StaffSchedulerController'
-    Route::get('/staff-schedule', [StaffSchedulerController::class, 'index'])->name('staff-scheduler.index');
-
-    Route::delete('/staff-scheduler/{scheduler}', [StaffSchedulerController::class, 'destroy'])->name('staff-scheduler.destroy');
-
-    Route::get('/staff-scheduler/{scheduler}/edit', [StaffSchedulerController::class, 'edit'])->name('staff-scheduler.edit');
-
-    Route::put('/staff-scheduler/{scheduler}', [StaffSchedulerController::class, 'update'])->name('staff-schedule.update');
-
-});
-
-// Define un grupo de rutas que aplican el middleware 'role:admin'
-Route::middleware('role:admin')->group(function(){
-    // Define una ruta GET para '/users' que usa el método 'index' del controlador 'UsersController'
-    Route::get('/users',[UsersController::class, 'index'])
-        ->name('users.index');
-
-    // Define una ruta GET para editar los servicios de un usuario específico
-    Route::get('users/{user}/services/edit', [UsersServicesController::class, 'edit'])
-        ->name('users-services.edit');
-
-    // Define una ruta PUT para actualizar los servicios de un usuario específico
-    Route::put('/users/{user}/services', [UsersServicesController::class, 'update'])
-        ->name('users-services.update');
-
-    // Ruta para mostrar el formulario de creación de usuarios.
-    Route::get('/users/create', [UsersController::class, 'create'])
-        ->name('users.create');
-
-    // Ruta para almacenar un nuevo usuario.
-    Route::post('/users/store', [UsersController::class, 'store'])
-        ->name('users.store');
-
-    // Ruta para editar un usuario existente.
-    Route::get('/users/{user}/edit', [UsersController::class, 'edit'])
-        ->name('users.edit');
+    /**
+     * Actualiza una cita específica del personal.
+     *
+     * @param  \App\Models\Scheduler  $scheduler
+     * @param  \App\Http\Requests\StaffScheduleRequest  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Scheduler $scheduler, StaffScheduleRequest $request)
+    {
+        // Obtiene el usuario del personal autenticado
+        $staffUser = auth()->user();
         
-    // Ruta para actualizar los datos de un usuario.
-    Route::put('/users/{user}', [UsersController::class, 'update'])
-        ->name('users.update');
+        // Encuentra al usuario cliente asociado a la cita
+        $clientUser = User::find($scheduler->client_user_id);
 
-    Route::get('/opening-hours/edit', [OpeningHoursController::class, 'edit'])
-        ->name('opening-hours.edit');
+        // Si el usuario cliente no existe, retorna con un mensaje de error
+        if (!$clientUser) {
+            return back()->withErrors('Usuario cliente no encontrado')->withInput();
+        }
 
-    Route::post('/opening-hours/update', [OpeningHoursController::class, 'update'])
-        ->name('opening-hours.update');
+        // Obtiene el servicio asociado a la cita
+        $service = $scheduler->service;
 
-});
+        // Parsea la fecha y hora desde el input del formulario
+        $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
+        
+        // Calcula la fecha de fin sumando la duración del servicio
+        $to = Carbon::parse($from)->addMinutes($service->duration);
 
+        // Verifica las reglas de reprogramación con el método del request
+        $request->checkRescheduleRules($scheduler, $staffUser, $clientUser, $from, $to, $service);
 
-// Agrupa las rutas de perfil que requieren autenticación
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+        // Actualiza la cita con los nuevos datos
+        $scheduler->update([
+            'from' => $from,
+            'to' => $to,
+        ]);
 
-// Requiere las rutas de autenticación generadas por Laravel
-require __DIR__ . '/auth.php';
+        // Redirige de vuelta al índice de citas del personal con un mensaje de éxito
+        return redirect()->route('staff-scheduler.index', [
+            'date' => $from->format('Y-m-d')
+        ])->with('success', 'Cita actualizada con éxito.');
+    }
+
+    /**
+     * Elimina una cita específica del personal.
+     *
+     * @param  \App\Models\Scheduler  $scheduler
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Scheduler $scheduler)
+    {
+        // Carga los usuarios cliente y del personal asociados a la cita
+        $scheduler->load(['clientUser', 'staffUser']);
+        
+        // Obtiene al usuario autenticado
+        $user = auth()->user();
+        
+        // Si la cita no existe, redirige con un mensaje de error
+        if (!$scheduler) {
+            return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
+        }
+
+        // Verifica si el usuario tiene permisos para eliminar la cita
+        if ($scheduler->client_user_id != $user->id && $scheduler->staff_user_id != $user->id) {
+            return back()->withErrors('No tienes permiso para cancelar esta cita.');
+        }
+
+        // Elimina la cita
+        $scheduler->delete();
+
+        // Redirige de vuelta al índice de citas del personal con un mensaje de éxito
+        return redirect()->route('my-schedule.index')->with('success', 'Cita eliminada con éxito.');
+    }
+}

@@ -62,16 +62,6 @@ class StaffSchedulerController extends Controller
         
         $user = auth()->user();
         
-        dd([
-            'scheduler_id' => $scheduler->id,
-            'scheduler_staff_user_id' => $scheduler->staff_user_id,
-            'scheduler_client_user_id' => $scheduler->client_user_id,
-            'user_id' => $user ? $user->id : null,
-            'scheduler_to' => $scheduler->to,
-            'scheduler_from' => $scheduler->from,
-            'scheduler_from_diff_in_hours' => $scheduler->from ? $scheduler->from->diffInHours() : null,
-        ]);
-
         if (!$scheduler) {
             return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
         }
