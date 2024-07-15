@@ -60,48 +60,60 @@ class MyScheduleController extends Controller
     /**
      * Almacena una nueva cita.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\MyScheduleRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(MyScheduleRequest $request)
     {
-
+        // Valida los datos del formulario
+        $validatedData = $request->validate([
+            'from.date' => 'required|date',
+            'from.time' => 'required',
+            'service_id' => 'required|exists:services,id',
+            'staff_user_id' => 'required|exists:users,id',
+        ]);
+        // dd($validatedData);  // Verifica los datos validados
+    
         // Obtiene el servicio seleccionado
-        $service = Service::find(request('service_id'));
-
+        $service = Service::find($request->input('service_id'));
+    
         // Combina la fecha y la hora de inicio en una instancia de Carbon
         $from = Carbon::parse($request->input('from.date') . ' ' . $request->input('from.time'));
-
+    
         // Calcula la hora de finalización añadiendo la duración del servicio
         $to = Carbon::parse($from)->addMinutes($service->duration);
-
+    
         // Busca el usuario del personal basado en el 'staff_user_id' proporcionado en la solicitud
         $staffUser = User::find($request->input('staff_user_id'));
-
+    
         // Llama a la función que verifica las reglas de reserva para comprobar la disponibilidad del personal, del cliente y la prestación del servicio
         $request->checkReservationRules($staffUser, auth()->user(), $from, $to, $service);
-        
+        // dd('Passed checkReservationRules');
+    
         // Crea una nueva cita en la base de datos
-        $scheduler = Scheduler::create([
-            'from' => $from,
-            'to' => $to,
-            'status' => 'pending',
-            'staff_user_id' => request('staff_user_id'),
-            'client_user_id' => auth()->id(),
-            'service_id' => $service->id,
-        ]);
-
-        
+        try {
+            $scheduler = Scheduler::create([
+                'from' => $from,
+                'to' => $to,
+                'status' => 'pending',
+                'staff_user_id' => $staffUser->id,
+                'client_user_id' => auth()->id(),
+                'service_id' => $service->id,
+            ]);
+        } catch (\Exception $e) {
+            dd('Error:', $e->getMessage());
+        }
+    
         // Redirige a la vista del calendario con un mensaje de éxito
         return redirect()->route('my-schedule.index', [
             'date' => $from->format('Y-m-d')
-                ])->with('success', 'Cita creada con éxito.');
+        ])->with('success', 'Cita creada con éxito.');
     }
 
     /**
      * Elimina una cita existente.
      *
-     * @param \App\Models\Scheduler $scheduler
+     * @param \App\Models\Scheduler $schedule
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Scheduler $schedule)
@@ -110,15 +122,7 @@ class MyScheduleController extends Controller
         if (!$schedule) {
             return redirect()->route('my-schedule.index')->withErrors('Cita no encontrada.');
         }
-/*
-        // Depuración: Verifica el contenido del Scheduler
-        dd([
-            'scheduler_id' => $schedule->id,
-            'client_user_id' => $schedule->client_user_id,
-            'from' => $schedule->from,
-            'to' => $schedule->to,
-        ]);
-*/
+
         // Verifica los permisos para eliminar la cita
         $checker = new DeletePermissionChecker($schedule, auth()->user());
 
@@ -180,6 +184,4 @@ class MyScheduleController extends Controller
             'date' => $from->format('Y-m-d')  // Fecha de la cita para filtrar el índice
         ])->with('success', 'Cita creada con éxito.');
     }
-    
-
 }
