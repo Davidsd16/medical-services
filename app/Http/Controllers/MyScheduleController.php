@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MyScheduleRequest;
 use App\Business\DeletePermissionChecker;
-use App\Notifications\SchedulerCreated;
-use Illuminate\Console\Scheduling\Schedule;
 
 class MyScheduleController extends Controller
 {
@@ -67,6 +65,7 @@ class MyScheduleController extends Controller
      */
     public function store(MyScheduleRequest $request)
     {
+
         // Obtiene el servicio seleccionado
         $service = Service::find(request('service_id'));
 

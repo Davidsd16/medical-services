@@ -15,8 +15,9 @@
                     <!-- Validar registro en fortmulario -->
                     <x-auth-validation-errors></x-auth-validation-errors>
                     <!-- Formulario para reservar una cita -->
-                    <form action="{{ route('my-schedule.store') }}">
+                    <form action="{{ route('my-schedule.store') }}" method="POST">
                         @csrf
+                        @method('POST')
                         <!-- Grid para organizar los elementos del formulario en dos columnas -->
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Campo de entrada de fecha para la cita -->
